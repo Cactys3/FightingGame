@@ -1,0 +1,59 @@
+[gd_scene load_steps=10 format=3 uid="uid://b8xfhu3qychcm"]
+
+[ext_resource type="Script" uid="uid://bev3ppuhylgl5" path="res://Characters/Default/default_character.gd" id="1_40854"]
+[ext_resource type="Texture2D" uid="uid://douiq1xlquod" path="res://Art/Testing/Ground/Character_Stand.png" id="2_rmk8e"]
+[ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="3_qi4nq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jw5o7"]
+atlas = ExtResource("2_rmk8e")
+region = Rect2(0, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kclne"]
+atlas = ExtResource("2_rmk8e")
+region = Rect2(112, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sikfd"]
+atlas = ExtResource("2_rmk8e")
+region = Rect2(224, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qpomt"]
+atlas = ExtResource("2_rmk8e")
+region = Rect2(336, 0, 112, 152)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rmk8e"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jw5o7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kclne")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sikfd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qpomt")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+script = ExtResource("3_qi4nq")
+stall = 30
+metadata/_custom_type_script = "uid://mka3ildkshw6"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qi4nq"]
+script = ExtResource("3_qi4nq")
+metadata/_custom_type_script = "uid://mka3ildkshw6"
+
+[node name="DefaultCharacter" type="Node2D"]
+script = ExtResource("1_40854")
+stand_animation = SubResource("SpriteFrames_rmk8e")
+crouch_animation = SubResource("SpriteFrames_qi4nq")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="Hitbox" type="Area2D" parent="."]
+
+[node name="Hurtbox" type="Area2D" parent="."]

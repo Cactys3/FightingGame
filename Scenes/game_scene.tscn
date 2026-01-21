@@ -1,0 +1,37 @@
+[gd_scene load_steps=6 format=3 uid="uid://bikqfdeqb4dt4"]
+
+[ext_resource type="Texture2D" uid="uid://c3em1ktpp6p4j" path="res://Art/Testing/Ground/Ground.png" id="1_x87qo"]
+[ext_resource type="PackedScene" uid="uid://b8xfhu3qychcm" path="res://Characters/Default/DefaultCharacter.tscn" id="2_b6fju"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_b6fju"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x87qo"]
+atlas = ExtResource("1_x87qo")
+region = Rect2(0, 0, 640, 360)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fiftr"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x87qo")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="GameScene" type="Node2D"]
+
+[node name="Ground" type="Area2D" parent="."]
+position = Vector2(0, 360)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
+position = Vector2(0, -34)
+shape = SubResource("WorldBoundaryShape2D_b6fju")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Ground"]
+position = Vector2(320, -180)
+sprite_frames = SubResource("SpriteFrames_fiftr")
+
+[node name="DefaultCharacter" parent="." instance=ExtResource("2_b6fju")]
+position = Vector2(282, 190)
