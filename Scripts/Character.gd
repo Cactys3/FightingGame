@@ -5,7 +5,7 @@ class_name Character
 @onready var hitbox: Area2D = $Hitbox
 @onready var hurtbox: Area2D = $Hurtbox
 var current_state: CharacterState
-
+var input_buffer: Array[InputBuffer] 
 var velocity: Vector2 = Vector2.ZERO
 
 ## Basic States
@@ -91,3 +91,14 @@ func get_backward_walk() -> CharacterState:
 	backward_walk.basic_setup(stand_animation, stand_collision_boxes, stand_drag, true) ## TODO: calculate facing left?
 	backward_walk.movement_setup(backward_walk_movespeed, false)
 	return backward_walk
+
+
+## Used to store inputs for a certian number of frames
+class InputBuffer:
+	var input_name: String
+	var buffer_frames_left: int = 10
+	func reduce_buffer_or_delete(buffer: Array):
+		buffer_frames_left -= 1
+		if buffer_frames_left <= 0 && buffer.has(self):
+			buffer.erase(self)
+			## TODO: does this need to free? or does reference counting handle this?

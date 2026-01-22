@@ -73,29 +73,17 @@ func disable_state():
 func _physics_process(_delta: float) -> void:
 	if !enabled:
 		return
-	reset_stuff()
 	advance_frame()
 	advance_animation()
 	setup_collision()
 	process_variables()
+	grab_inputs()
 	process_inputs()
 	process_collisions()
 	process_movement()
 	process_unique()
 	check_state_queue()
 ## Process Methods
-func reset_stuff():
-	state_queue.clear()
-	up_pressed = false
-	down_pressed = false
-	left_pressed = false
-	right_pressed = false
-	A_pressed = false
-	B_pressed = false
-	C_pressed = false
-	D_pressed = false
-	start_pressed = false
-	back_pressed = false
 func advance_frame():
 	frame += 1 
 ## Set Animation based on framecount, loop if desired
@@ -127,19 +115,57 @@ func setup_collision():
 func process_variables():
 	pass
 ## Go through each input and check if it's being pressed, then set boolean var values for this frame to be handled in end step
-func process_inputs():
+func grab_inputs():
+	reset_inputs()
 	## Grab Inputs # TODO: input buffer
-	up_pressed = Input.is_action_pressed("Up")
-	down_pressed = Input.is_action_pressed("Down")
-	left_pressed = Input.is_action_pressed("Left")
-	right_pressed = Input.is_action_pressed("Right")
-	A_pressed = Input.is_action_pressed("A")
-	B_pressed = Input.is_action_pressed("B")
-	C_pressed = Input.is_action_pressed("C")
-	D_pressed = Input.is_action_pressed("D")
-	start_pressed = Input.is_action_pressed("Start")
-	back_pressed = Input.is_action_pressed("Back")
-	
+	for input in character.input_buffer:
+		if input.reduce_buffer_or_delete(character.input_buffer):
+			set_input(input.input_name)
+	set_input("Up")
+	set_input("Down")
+	set_input("Left")
+	set_input("Right")
+	set_input("A")
+	set_input("B")
+	set_input("C")
+	set_input("D")
+	set_input("Start")
+	set_input("Back")
+func reset_inputs():
+	up_pressed = false
+	down_pressed = false
+	left_pressed = false
+	right_pressed = false
+	A_pressed = false
+	B_pressed = false
+	C_pressed = false
+	D_pressed = false
+	start_pressed = false
+	back_pressed = false
+func set_input(value: String):
+	match value:
+		"Up":
+			up_pressed = Input.is_action_pressed("Up")
+		"Down":
+			down_pressed = Input.is_action_pressed("Down")
+		"Left":
+			left_pressed = Input.is_action_pressed("Left")
+		"Right":
+			right_pressed = Input.is_action_pressed("Right")
+		"A":
+			A_pressed = Input.is_action_pressed("A")
+		"B":
+			B_pressed = Input.is_action_pressed("B")
+		"C":
+			C_pressed = Input.is_action_pressed("C")
+		"D":
+			D_pressed = Input.is_action_pressed("D")
+		"Start":
+			start_pressed = Input.is_action_pressed("Start")
+		"Back":
+			back_pressed = Input.is_action_pressed("Back")
+
+func process_inputs():
 	if can_transition_to_movement:
 		transition_to_movement()
 ## Go through each hurtbox and check if any opponent hitboxes are inside it. Go through each hitbox and check if any opponent hurtboxes are inside it.
@@ -149,38 +175,60 @@ func process_collisions():
 func check_state_queue():
 	if state_queue.is_empty():
 		return
-	var highest_priority_state: CharacterState = state_queue[0]
+	var highest_priority_state: CharacterState = null
 	for state in state_queue:
-		if state.state_switching_priority > highest_priority_state.state_switching_priority:
-			highest_priority_state = state
-	character.change_state(highest_priority_state)
-
+		if can_transition_to_state(state):
+			if highest_priority_state != null:
+				if state.state_switching_priority > highest_priority_state.state_switching_priority:
+					highest_priority_state = state
+			else:
+				highest_priority_state = state
+	if highest_priority_state:
+		character.change_state(highest_priority_state)
+	else:
+		## If didn't just change state, reduce state change buffers
+		## TODO: save state change buffers on change state and send to next state? probably not need unless i think of a reason it is
+		for state in state_queue:
+			state.reduce_buffer_or_delete(state_queue)
+## Checks and returns if this state can currently transition to given state
+func can_transition_to_state(state: CharacterState) -> bool:
+	return true
 func transition_to_movement():
-	check_forward()
-	check_backward()
-	check_up()
-	check_down()
+	var forward: bool = check_forward()
+	var backward: bool = check_backward()
+	## Neutral Left/Right SOCD
+	if forward && backward:
+		forward = false
+		backward = false
+	var up: bool = check_up()
+	var down: bool = check_down()
+	if forward:
+		state_queue.append(character.get_forward_walk())
+	if backward:
+		state_queue.append(character.get_backward_walk())
 ## Checks
-func check_forward():
+func check_forward() -> bool:
 	## Forward
 	if left_pressed && !facing_right:
 		print("transition to forward_walk - left")
-		state_queue.append(character.get_forward_walk())
+		return true
 	elif right_pressed && facing_right:
 		print("transition to forward_walk - right")
-		state_queue.append(character.get_forward_walk())
-func check_backward():
+		return true
+	return false
+func check_backward() -> bool:
 	## Backward
 	if left_pressed && facing_right:
 		print("transition to backward_walk - left")
-		state_queue.append(character.get_backward_walk())
+		return true
 	elif right_pressed && !facing_right:
 		print("transition to backward_walk - right")
-		state_queue.append(character.get_backward_walk())
-func check_up():
-	pass
-func check_down():
-	pass
+		return true
+	return false
+func check_up() -> bool:
+	return false
+func check_down() -> bool:
+	return false
 func check_grounded():
 	pass
 func process_movement():
@@ -194,3 +242,11 @@ func process_movement():
 ## Happens after all process but before state change
 func process_unique():
 	pass
+
+class StateQueueItem:
+	var State: CharacterState
+	var buffer_frames_left: int = 0
+	func reduce_buffer_or_delete(queue: Array):
+		buffer_frames_left -= 1
+		if buffer_frames_left <= 0 && queue.has(self):
+			queue.erase(self)
