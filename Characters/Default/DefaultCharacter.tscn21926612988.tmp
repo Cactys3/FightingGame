@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://b8xfhu3qychcm"]
 
 [ext_resource type="Script" uid="uid://bev3ppuhylgl5" path="res://Characters/Default/default_character.gd" id="1_40854"]
-[ext_resource type="PackedScene" uid="uid://ct5gccd03pmlu" path="res://Characters/Default/States/Stand/Stand.tscn" id="2_rmk8e"]
-[ext_resource type="PackedScene" uid="uid://bfn43q8n417k7" path="res://Characters/Default/States/ForwardWalk/ForwardWalk.tscn" id="3_jw5o7"]
-[ext_resource type="PackedScene" uid="uid://26od1wt8jm1x" path="res://Characters/Default/States/BackwardWalk/BackwardWalk.tscn" id="4_kclne"]
+[ext_resource type="PackedScene" uid="uid://ct5gccd03pmlu" path="res://Characters/Default/States/Stand.tscn" id="2_rmk8e"]
+[ext_resource type="PackedScene" uid="uid://bfn43q8n417k7" path="res://Characters/Default/States/ForwardWalk.tscn" id="3_jw5o7"]
+[ext_resource type="PackedScene" uid="uid://26od1wt8jm1x" path="res://Characters/Default/States/BackwardWalk.tscn" id="4_kclne"]
 
 [node name="DefaultCharacter" type="Node2D"]
 script = ExtResource("1_40854")
