@@ -2,7 +2,9 @@ extends CharacterState
 class_name AttackState
 
 func _init():
-	pass
+	super()
+	normal_priority = NormalPriorities.FiveA
+
 enum NormalPriorities {unset, FiveA, FiveB, FiveC, FiveD, SixA, SixB, SixC, SixD, FourA, FourB, FourC, FourD, TwoA, TwoB, TwoC, TwoD, ThreeA, ThreeB, ThreeC, ThreeD, OneA, OneB, OneC, OneD}
 var normal_priority: NormalPriorities = NormalPriorities.unset
 @export var startup_frames: int = 0
@@ -10,7 +12,6 @@ var normal_priority: NormalPriorities = NormalPriorities.unset
 @export var recovery_frames: int = 0
 @export var block_stun: int = 0
 @export var hit_stun: int = 0
-@export var stand_on_anim_done: bool = true
 @export_group("Cancels")
 @export var fiveA_transitionable: bool = false
 @export var fiveB_transitionable: bool = false
@@ -36,22 +37,30 @@ var normal_priority: NormalPriorities = NormalPriorities.unset
 @export var oneB_transitionable: bool = false
 @export var oneC_transitionable: bool = false
 @export var oneD_transitionable: bool = false
-
 ## Current Frame Variables, setup each frame
-var curr_active: bool = false
-var curr_startup: bool = false
-var curr_recovery: bool = false
+var currently_startup: bool = false
+var currently_active: bool = false
+var currently_recovery: bool = false
 var cancellable: bool = false
+var kara_cancellable: bool = false
+func advance_frame():
+	super()
+	if frame >= startup_frames + active_frames:
+		currently_recovery = true
+		cancellable = true
+	elif frame >= startup_frames:
+		currently_active = true
+		cancellable = false
+	else:
+		currently_startup = true
+		cancellable = false
+## Check transitioning after animation is done
 func process_unique():
 	if animation.is_at_end() && stand_on_anim_done:
 		state_queue.force_add(character.stand.instantiate(), stand_buffer)
-
 func enable_state(chara: Character):
 	super(chara)
-
-
 ## Getting hit, handle punish/counter
-
 ## Handle Normal Priorities and cancels
 func transition_to_stand(state: CharacterState, force: bool) -> bool:
 	if animation.is_at_end() && stand_on_anim_done:

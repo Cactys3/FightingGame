@@ -10,7 +10,7 @@ func _init():
 
 @export_category("JumpState Specifics")
 ## How fast you move upward for 'jumpframes'
-@export var jump_speed: float = 10
+@export var jump_speed: float = 3
 ## How fast you move forward
 @export var jump_speed_x_front: float = 1
 ## How fast you move backward
@@ -18,8 +18,10 @@ func _init():
 ## How many frames you have to cancel a jump before it goes off
 @export var jump_startup_frames: int = 4
 ## After startup, How many frames you move upward before transitioning to 'fall' state where you can use moves
-@export var jump_complete_frames: int = 6
-
+@export var jump_active_frames: int = 4
+var total_frames:
+	get():
+		return jump_startup_frames + jump_active_frames
 enum jump_types {back, neutral, front}
 var jump_type = jump_types.neutral
 var startup_complete: bool = false
@@ -51,34 +53,34 @@ func enable_state(chara: Character):
 				character.set_movement(Vector2.ZERO)
 func advance_frame():
 	super()
-	if frame == jump_startup_frames:
+	## If past startup, we are committed to the jump and can't cancel
+	if frame >= jump_startup_frames && !startup_complete:
 		startup_complete = true
-		dash_transitionable = false
-		normal_transitionable = false
 		disable_all_transitionability()
 		falling_transitionable = true
 		getting_hit_transitionable = true
-	
-	if frame == jump_complete_frames:
-		## Force change_state?
-		#character.change_state(character.fall.instantiate())
-		state_queue.add(character.fall.instantiate(), falling_buffer)
+	## If total frames, we are done jumping and can force a fall
+	if frame >= total_frames:
+		## Force Add
+		state_queue.force_add(character.fall.instantiate(), falling_buffer)
 
 func check_jump():
 	pass
 
 ## Overwrite with jump movement
 func process_movement():
-	var movement_sign_offset: int = 1
-	if !character.facing_right:
-		movement_sign_offset = -1
-	var new_velocity: Vector2 = Vector2(0, -jump_speed)
-	match(jump_type):
-		jump_types.back:
-			new_velocity = Vector2(movement_sign_offset * -jump_speed_x_back, new_velocity.y)
-		jump_types.neutral:
-			new_velocity = Vector2(0, new_velocity.y)
-		jump_types.front:
-			new_velocity = Vector2(movement_sign_offset * jump_speed_x_front, new_velocity.y)
-	character.add_movement(new_velocity)
+	print("can jump: " + str(startup_complete))
+	if startup_complete:
+		var movement_sign_offset: int = 1
+		if !character.facing_right:
+			movement_sign_offset = -1
+		var new_velocity: Vector2 = Vector2(0, -jump_speed)
+		match(jump_type):
+			jump_types.back:
+				new_velocity = Vector2(movement_sign_offset * -jump_speed_x_back, new_velocity.y)
+			jump_types.neutral:
+				new_velocity = Vector2(0, new_velocity.y)
+			jump_types.front:
+				new_velocity = Vector2(movement_sign_offset * jump_speed_x_front, new_velocity.y)
+		character.add_movement(new_velocity)
 	character.process_movement()

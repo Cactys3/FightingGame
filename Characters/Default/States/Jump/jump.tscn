@@ -37,9 +37,6 @@ metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [node name="Jump" type="Node2D"]
 script = ExtResource("1_d1viv")
-jump_speed = 3.0
-jump_startup_frames = 10
-state_name = "Jump"
 dash_transitionable = true
 normal_transitionable = true
 grab_transitionable = true

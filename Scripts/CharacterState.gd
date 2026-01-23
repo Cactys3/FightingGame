@@ -44,6 +44,10 @@ enum StateSwitchingPriorities {unset, crouch, stand, movement, jump, dash, norma
 @export var gravity: float = 0
 @export var movespeed: float = 0
 @export_category("Animation Properties")
+## Requires 'stand_transitionable = true'
+@export var stand_on_anim_done: bool = false
+## Requires 'crouch_transitionable = true'
+@export var crouch_on_anim_done: bool = false
 @export var loop: bool
 @export var animation: AnimSprites
 @export var colliders: Array[CollisionBox]
@@ -129,7 +133,7 @@ func setup_collision():
 					collider.queue_free()
 ## Set Variables that happen at specific times during animations/states
 func process_variables():
-	pass
+	check_anim_done()
 ## Go through each input and check if it's being pressed, then set boolean var values for this frame to be handled in end step
 func grab_inputs():
 	input_state = character.get_inputs()
@@ -166,6 +170,12 @@ func check_state_queue():
 	#	state.reduce_buffer_or_delete(state_queue)
 
 ## Checks
+func check_anim_done():
+	if animation.is_at_end():
+		if stand_on_anim_done:
+			state_queue.add(character.stand.instantiate(), stand_buffer)
+		elif crouch_on_anim_done:
+			state_queue.add(character.crouch.instantiate(), crouch_buffer)
 func check_a():
 	if input_state.A:
 		## Check Command Normals
