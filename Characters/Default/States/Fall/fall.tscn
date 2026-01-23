@@ -32,7 +32,6 @@ metadata/_custom_type_script = "uid://mka3ildkshw6"
 [node name="Fall" type="Node2D"]
 script = ExtResource("1_prbwk")
 state_name = "Fall"
-state_switching_priority = 11
 can_block = true
 stand_transitionable = true
 air_dash_transitionable = true

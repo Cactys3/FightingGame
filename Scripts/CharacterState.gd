@@ -9,8 +9,8 @@ var active_colliders: Array[CollisionShape2D]
 var input_state: Character.InputState
 @export_category("Generic Properties")
 @export var state_name: String = "Default"
-@export var state_switching_priority: StateSwitchingPriorities = StateSwitchingPriorities.stand
-enum StateSwitchingPriorities {crouch, stand, movement, jump, dash, normal, grab, special, parry, _super, ultimate, falling, air_dash, air_normal, air_grab, air_special, air_super, air_ultimate, getting_hit}
+var state_switching_priority: StateSwitchingPriorities = StateSwitchingPriorities.unset
+enum StateSwitchingPriorities {unset, crouch, stand, movement, jump, dash, normal, grab, special, parry, _super, ultimate, falling, air_dash, air_normal, air_grab, air_special, air_super, air_ultimate, getting_hit}
 @export var can_block: bool = false
 @export var throwable: bool = true
 @export_category("Transition Properties")
@@ -50,9 +50,10 @@ enum StateSwitchingPriorities {crouch, stand, movement, jump, dash, normal, grab
 ## Current Frame Variables, setup each frame
 var pressed_crouch: bool = false
 var pressed_jump: bool = false
+func _init():
+	pass
 ## Sets this state up as the currently active state for the given character
 func enable_state(chara: Character):
-	print("Current: " + StateSwitchingPriorities.keys()[self.state_switching_priority] + ", " + state_name)
 	character = chara
 	frame = 0
 	enabled = true
@@ -109,10 +110,14 @@ func grab_inputs():
 	input_state = character.get_inputs()
 func process_inputs():
 	check_fall()
-	check_forward()
-	check_backward()
+	check_forward_walk()
+	check_backward_walk()
 	check_jump()
 	check_crouch()
+	check_a()
+	check_b()
+	check_c()
+	check_d()
 ## Go through each hurtbox and check if any opponent hitboxes are inside it. Go through each hitbox and check if any opponent hurtboxes are inside it.
 func process_collisions():
 	## for blocking check, just see if we are holding back and not using a move where we can't block
@@ -126,72 +131,47 @@ func check_state_queue():
 	## Try by highest priority
 	for state in state_queue:
 		if transition_to_state(state):
+			#print("Sucess: " + state_name + "." + StateSwitchingPriorities.keys()[self.state_switching_priority] + " --> " + state.state_name + "." + StateSwitchingPriorities.keys()[state.state_switching_priority])
 			return
+		else:
+			pass#print("Fail: " + state_name + "." + StateSwitchingPriorities.keys()[self.state_switching_priority] + " --> " + state.state_name + "." + StateSwitchingPriorities.keys()[state.state_switching_priority])
 	state_queue.clear()
 	## If didn't just change state, reduce state change buffers
 	## TODO: save state change buffers on change state and send to next state? probably not need unless i think of a reason it is
 	#for state in state_queue:
 	#	state.reduce_buffer_or_delete(state_queue)
-## Checks and returns if this state can currently transition to given state
-func transition_to_state(state: CharacterState) -> bool:
-	## Write each out in a match statement so inherited objects can overwrite custom transitions
-	if state == self:
-		print("trying to transition to self")
-		return false
-	#print(StateSwitchingPriorities.keys()[state.state_switching_priority])
-	match state.state_switching_priority:
-		StateSwitchingPriorities.stand:
-			return transition_to_stand(state)
-		StateSwitchingPriorities.crouch:
-			return transition_to_crouch(state)
-		StateSwitchingPriorities.movement:
-			return transition_to_movement(state)
-		StateSwitchingPriorities.jump:
-			return transition_to_jump(state)
-		StateSwitchingPriorities.dash:
-			return transition_to_dash(state)
-		StateSwitchingPriorities.normal:
-			return transition_to_normal(state)
-		StateSwitchingPriorities.grab:
-			return transition_to_grab(state)
-		StateSwitchingPriorities.special:
-			return transition_to_special(state)
-		StateSwitchingPriorities.parry:
-			return transition_to_parry(state)
-		StateSwitchingPriorities._super:
-			return transition_to_super(state)
-		StateSwitchingPriorities.ultimate:
-			return transition_to_ultimate(state)
-		StateSwitchingPriorities.falling:
-			return transition_to_falling(state)
-		StateSwitchingPriorities.air_dash:
-			return transition_to_air_dash(state)
-		StateSwitchingPriorities.air_normal:
-			return transition_to_air_normal(state)
-		StateSwitchingPriorities.air_grab:
-			return transition_to_air_grab(state)
-		StateSwitchingPriorities.air_special:
-			return transition_to_air_special(state)
-		StateSwitchingPriorities.air_super:
-			return transition_to_air_super(state)
-		StateSwitchingPriorities.air_ultimate:
-			return transition_to_air_ultimate(state)
-		StateSwitchingPriorities.getting_hit:
-			return transition_to_getting_hit(state)
-	return false
 
 ## Checks
-func check_forward():
+func check_a():
+	if input_state.A:
+		## Check Command Normals
+		if backward_input() && character.four_A != null:
+			## Backwards
+			state_queue.append(character.four_A.instantiate())
+		## Forward
+		elif input_state.down && forward_input() && character.four_A != null:
+			## Down-Forward
+			state_queue.append(character.four_A.instantiate())
+		elif forward_input() && character.six_A != null:
+			## Forward
+			state_queue.append(character.six_A.instantiate())
+		elif character.five_A != null:
+			## Neutral
+			state_queue.append(character.five_A.instantiate())
+
+func check_b():
+	pass
+func check_c():
+	pass
+func check_d():
+	pass
+func check_forward_walk():
 	## Forward
-	if input_state.left && !character.facing_right:
+	if forward_input():
 		state_queue.append(character.forward_walk.instantiate())
-	elif input_state.right && character.facing_right:
-		state_queue.append(character.forward_walk.instantiate())
-func check_backward():
+func check_backward_walk():
 	## Backward
-	if input_state.left && character.facing_right:
-		state_queue.append(character.backward_walk.instantiate())
-	elif input_state.right && !character.facing_right:
+	if backward_input():
 		state_queue.append(character.backward_walk.instantiate())
 func check_jump():
 	if input_state.up:
@@ -213,8 +193,7 @@ func process_movement():
 	if movespeed != 0:
 		## If already moving in correct direction and moving faster than movespeed, don't overwrite speed, just continue
 		if sign(character.velocity.length()) == sign(movespeed * movement_sign_offset) && abs(character.velocity.length()) > abs(movespeed * movement_sign_offset):
-			print(str( sign(character.velocity.length()))  + " vs " + str(sign(movespeed * movement_sign_offset)))
-			print(str( (character.velocity.length()))  + " vs " + str((movespeed * movement_sign_offset)))
+			pass
 		else:
 			should_drag_x = false
 			character.set_movement(Vector2(movespeed * movement_sign_offset, character.velocity.y))
@@ -241,6 +220,11 @@ func process_movement():
 		character.set_movement(Vector2(character.velocity.x, 0))
 	character.process_movement()
 
+## Helper Methods
+func forward_input() -> bool:
+	return (input_state.left && !character.facing_right) || (input_state.right && character.facing_right)
+func backward_input() -> bool:
+	return (input_state.left && character.facing_right) || (input_state.right && !character.facing_right)
 ## Happens after all process but before state change
 func process_unique():
 	pass
@@ -296,7 +280,53 @@ class StateQueue:
 			frames_left -= 1
 			if frames_left <= 0 && queue.has(self):
 				queue.erase(self)
-
+## Checks and returns if this state can currently transition to given state
+func transition_to_state(state: CharacterState) -> bool:
+	## Write each out in a match statement so inherited objects can overwrite custom transitions
+	state._init()
+	if state == self:
+		print("trying to transition to self")
+		return false
+	match state.state_switching_priority:
+		StateSwitchingPriorities.stand:
+			return transition_to_stand(state)
+		StateSwitchingPriorities.crouch:
+			return transition_to_crouch(state)
+		StateSwitchingPriorities.movement:
+			return transition_to_movement(state)
+		StateSwitchingPriorities.jump:
+			return transition_to_jump(state)
+		StateSwitchingPriorities.dash:
+			return transition_to_dash(state)
+		StateSwitchingPriorities.normal:
+			return transition_to_normal(state)
+		StateSwitchingPriorities.grab:
+			return transition_to_grab(state)
+		StateSwitchingPriorities.special:
+			return transition_to_special(state)
+		StateSwitchingPriorities.parry:
+			return transition_to_parry(state)
+		StateSwitchingPriorities._super:
+			return transition_to_super(state)
+		StateSwitchingPriorities.ultimate:
+			return transition_to_ultimate(state)
+		StateSwitchingPriorities.falling:
+			return transition_to_falling(state)
+		StateSwitchingPriorities.air_dash:
+			return transition_to_air_dash(state)
+		StateSwitchingPriorities.air_normal:
+			return transition_to_air_normal(state)
+		StateSwitchingPriorities.air_grab:
+			return transition_to_air_grab(state)
+		StateSwitchingPriorities.air_special:
+			return transition_to_air_special(state)
+		StateSwitchingPriorities.air_super:
+			return transition_to_air_super(state)
+		StateSwitchingPriorities.air_ultimate:
+			return transition_to_air_ultimate(state)
+		StateSwitchingPriorities.getting_hit:
+			return transition_to_getting_hit(state)
+	return false
 ## Method for each trasition so inherited objects can override
 func transition_to_stand(state: CharacterState) -> bool:
 	if stand_transitionable:

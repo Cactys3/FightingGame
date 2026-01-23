@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcgpuh6qp3uto"]
+
+[ext_resource type="Script" uid="uid://l163ku3jce3i" path="res://Characters/Default/States/Neutral_A/CactusNeutralA.gd" id="1_u6uvo"]
+
+[node name="CactusNeutralA" type="Node2D"]
+script = ExtResource("1_u6uvo")

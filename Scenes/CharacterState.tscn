@@ -4,3 +4,4 @@
 
 [node name="CharacterState" type="Node"]
 script = ExtResource("1_e3lhb")
+state_switching_priority = 5

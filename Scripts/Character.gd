@@ -11,6 +11,9 @@ const C: String = "C"
 const D: String = "D"
 const START: String = "Start"
 const BACK: String = "Back"
+## Buffer Frame Counts
+const movement_buffer: int = 2
+const attack_buffer: int = 2
 @onready var anim: Sprite2D = $Sprite2D
 @onready var hitbox: Area2D = $Hitbox
 @onready var hurtbox: Area2D = $Hurtbox
@@ -33,6 +36,18 @@ var ground_ray: RayCast2D = RayCast2D.new()
 
 ## Attack States
 @export_group("Attack States")
+@export var five_A: PackedScene
+@export var five_B: PackedScene
+@export var five_C: PackedScene
+@export var five_d: PackedScene
+@export var six_A: PackedScene
+@export var six_B: PackedScene
+@export var six_C: PackedScene
+@export var six_d: PackedScene
+@export var two_A: PackedScene
+@export var two_B: PackedScene
+@export var two_C: PackedScene
+@export var two_d: PackedScene
 ## Defense States
 @export_group("Defense States")
 @export var stand_blockstun: PackedScene
@@ -70,10 +85,8 @@ func set_sprite(sprite: Texture2D):
 func process_movement():
 	position += velocity
 func add_movement(added_velocity: Vector2):
-	#print("Add Movement: " + str(added_velocity))
 	velocity += added_velocity
 func set_movement(new_velocity: Vector2):
-	#print("Set Movement: " + str(new_velocity))
 	velocity = new_velocity
 ## Returns a setup InputState based on InputBuffer and Input.action_pressed
 func get_inputs() -> InputState:
@@ -82,28 +95,28 @@ func get_inputs() -> InputState:
 	var state: InputState = InputState.new()
 	## Buffer new inputs (just pressed)
 	if Input.is_action_just_pressed(UP):
-		input_buffer.buffer(UP, 5)
+		input_buffer.buffer(UP, movement_buffer)
 		state.up = true
 	if Input.is_action_just_pressed(DOWN):
-		input_buffer.buffer(DOWN, 5)
+		input_buffer.buffer(DOWN, movement_buffer)
 		state.down = true
 	if Input.is_action_just_pressed(LEFT):
-		input_buffer.buffer(LEFT, 5)
+		input_buffer.buffer(LEFT, movement_buffer)
 		state.left = true
 	if Input.is_action_just_pressed(RIGHT):
-		input_buffer.buffer(RIGHT, 5)
+		input_buffer.buffer(RIGHT, movement_buffer)
 		state.right = true
 	if Input.is_action_just_pressed(A):
-		input_buffer.buffer(A, 10)
+		input_buffer.buffer(A, attack_buffer)
 		state.A = true
 	if Input.is_action_just_pressed(B):
-		input_buffer.buffer(B, 10)
+		input_buffer.buffer(B, attack_buffer)
 		state.B = true
 	if Input.is_action_just_pressed(C):
-		input_buffer.buffer(C, 10)
+		input_buffer.buffer(C, attack_buffer)
 		state.C = true
 	if Input.is_action_just_pressed(D):
-		input_buffer.buffer(D, 10)
+		input_buffer.buffer(D, attack_buffer)
 		state.D = true
 	if Input.is_action_just_pressed(START):
 		pass
@@ -145,16 +158,34 @@ func get_grounded() -> bool:
 	return false
 ## A bool for each standard input, used for sending current InputState to a CharacterState
 class InputState:
+	## Movement
 	var up: bool = false
 	var down: bool = false
 	var left: bool = false
 	var right: bool = false
+	## Normals
 	var A: bool = false
 	var B: bool = false
 	var C: bool = false
 	var D: bool = false
+	## Menus
 	var start: bool = false
 	var back: bool = false
+	## Motion Inputs (ew, traditional notation)
+	## Quarter Circle Forward
+	var qcf: bool = false
+	## Quarter Circle Back
+	var qcb: bool = false
+	## Half Circle Forward
+	var hcf: bool = false
+	## Half Circle Back
+	var hcb: bool = false
+	## Z Input Forward
+	var dpf: bool = false
+	## Z Input Back
+	var dpb: bool = false
+	## 360 Input
+	var fullcircle: bool = false
 ## Used to store inputs for a certian number of frames
 class InputBuffer:
 	var array: Array[InputElement]

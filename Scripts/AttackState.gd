@@ -1,5 +1,8 @@
 extends CharacterState
 
+func _init():
+	state_switching_priority = StateSwitchingPriorities.normal
+
 ## Attack State Things that normal states don't have:
 # Startup/Active/Recovery Frames
 # Counter Hit 
