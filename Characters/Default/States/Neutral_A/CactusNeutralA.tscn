@@ -1,6 +1,51 @@
-[gd_scene load_steps=2 format=3 uid="uid://bcgpuh6qp3uto"]
+[gd_scene load_steps=8 format=3 uid="uid://bcgpuh6qp3uto"]
 
 [ext_resource type="Script" uid="uid://l163ku3jce3i" path="res://Characters/Default/States/Neutral_A/CactusNeutralA.gd" id="1_u6uvo"]
+[ext_resource type="Texture2D" uid="uid://cw0clmc80spqf" path="res://Characters/Default/States/Neutral_A/Neutral_A.png" id="2_u1don"]
+[ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="3_33gwa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2v3ir"]
+atlas = ExtResource("2_u1don")
+region = Rect2(0, 0, 248, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_okprf"]
+atlas = ExtResource("2_u1don")
+region = Rect2(248, 0, 248, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ee70x"]
+atlas = ExtResource("2_u1don")
+region = Rect2(496, 0, 248, 152)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_q2veu"]
+animations = [{
+"frames": [{
+"duration": 6.0,
+"texture": SubResource("AtlasTexture_2v3ir")
+}, {
+"duration": 4.0,
+"texture": SubResource("AtlasTexture_okprf")
+}, {
+"duration": 8.0,
+"texture": SubResource("AtlasTexture_ee70x")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+script = ExtResource("3_33gwa")
+stall = 0
+metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [node name="CactusNeutralA" type="Node2D"]
 script = ExtResource("1_u6uvo")
+startup_frames = 6
+active_frames = 4
+recovery_frames = 8
+block_stun = 10
+hit_stun = 12
+fiveA_transitionable = true
+special_transitionable = true
+super_transitionable = true
+ultimate_transitionable = true
+stop_momentum = true
+animation = SubResource("SpriteFrames_q2veu")

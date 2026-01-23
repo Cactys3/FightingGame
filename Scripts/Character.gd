@@ -48,6 +48,18 @@ var ground_ray: RayCast2D = RayCast2D.new()
 @export var two_B: PackedScene
 @export var two_C: PackedScene
 @export var two_d: PackedScene
+@export var four_A: PackedScene
+@export var four_B: PackedScene
+@export var four_C: PackedScene
+@export var four_d: PackedScene
+@export var three_A: PackedScene
+@export var three_B: PackedScene
+@export var three_C: PackedScene
+@export var three_d: PackedScene
+@export var one_A: PackedScene
+@export var one_B: PackedScene
+@export var one_C: PackedScene
+@export var one_d: PackedScene
 ## Defense States
 @export_group("Defense States")
 @export var stand_blockstun: PackedScene
@@ -131,13 +143,13 @@ func get_inputs() -> InputState:
 		state.left = true
 	if Input.is_action_pressed(RIGHT) || input_buffer.is_buffered(RIGHT):
 		state.right = true
-	if Input.is_action_pressed(A) || input_buffer.is_buffered(A):
+	if input_buffer.is_buffered(A):
 		state.A = true
-	if Input.is_action_pressed(B) || input_buffer.is_buffered(B):
+	if input_buffer.is_buffered(B):
 		state.B = true
-	if Input.is_action_pressed(C) || input_buffer.is_buffered(C):
+	if input_buffer.is_buffered(C):
 		state.C = true
-	if Input.is_action_pressed(D) || input_buffer.is_buffered(D):
+	if input_buffer.is_buffered(D):
 		state.D = true
 	if Input.is_action_pressed(START) || input_buffer.is_buffered(START):
 		state.start = true

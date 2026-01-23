@@ -62,7 +62,7 @@ func advance_frame():
 	if frame == jump_complete_frames:
 		## Force change_state?
 		#character.change_state(character.fall.instantiate())
-		state_queue.append(character.fall.instantiate())
+		state_queue.add(character.fall.instantiate(), falling_buffer)
 
 func check_jump():
 	pass

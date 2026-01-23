@@ -1,15 +1,127 @@
 extends CharacterState
+class_name AttackState
 
 func _init():
-	state_switching_priority = StateSwitchingPriorities.normal
-
-## Attack State Things that normal states don't have:
-# Startup/Active/Recovery Frames
-# Counter Hit 
-# Punish Countered
-# Active Hitbox
+	pass
+enum NormalPriorities {unset, FiveA, FiveB, FiveC, FiveD, SixA, SixB, SixC, SixD, FourA, FourB, FourC, FourD, TwoA, TwoB, TwoC, TwoD, ThreeA, ThreeB, ThreeC, ThreeD, OneA, OneB, OneC, OneD}
+var normal_priority: NormalPriorities = NormalPriorities.unset
+@export var startup_frames: int = 0
+@export var active_frames: int = 0
+@export var recovery_frames: int = 0
+@export var block_stun: int = 0
+@export var hit_stun: int = 0
+@export var stand_on_anim_done: bool = true
+@export_group("Cancels")
+@export var fiveA_transitionable: bool = false
+@export var fiveB_transitionable: bool = false
+@export var fiveC_transitionable: bool = false
+@export var fiveD_transitionable: bool = false
+@export var sixA_transitionable: bool = false
+@export var sixB_transitionable: bool = false
+@export var sixC_transitionable: bool = false
+@export var sixD_transitionable: bool = false
+@export var fourA_transitionable: bool = false
+@export var fourB_transitionable: bool = false
+@export var fourC_transitionable: bool = false
+@export var fourD_transitionable: bool = false
+@export var twoA_transitionable: bool = false
+@export var twoB_transitionable: bool = false
+@export var twoC_transitionable: bool = false
+@export var twoD_transitionable: bool = false
+@export var threeA_transitionable: bool = false
+@export var threeB_transitionable: bool = false
+@export var threeC_transitionable: bool = false
+@export var threeD_transitionable: bool = false
+@export var oneA_transitionable: bool = false
+@export var oneB_transitionable: bool = false
+@export var oneC_transitionable: bool = false
+@export var oneD_transitionable: bool = false
 
 ## Current Frame Variables, setup each frame
 var curr_active: bool = false
 var curr_startup: bool = false
 var curr_recovery: bool = false
+var cancellable: bool = false
+func process_unique():
+	if animation.is_at_end() && stand_on_anim_done:
+		state_queue.force_add(character.stand.instantiate(), stand_buffer)
+
+func enable_state(chara: Character):
+	super(chara)
+
+
+## Getting hit, handle punish/counter
+
+## Handle Normal Priorities and cancels
+func transition_to_stand(state: CharacterState, force: bool) -> bool:
+	if animation.is_at_end() && stand_on_anim_done:
+		return super(state, force)
+	return false
+func transition_to_normal(state: CharacterState, force: bool) -> bool:
+	if cancellable && can_cancel_into_normal(state):
+		return super(state, force)
+	return false
+func transition_to_special(state: CharacterState, force: bool) -> bool:
+	return super(state, force)
+func transition_to_super(state: CharacterState, force: bool) -> bool:
+	return super(state, force)
+func transition_to_ultimate(state: CharacterState, force: bool) -> bool:
+	return super(state, force)
+func transition_to_jump(state: CharacterState, force: bool) -> bool:
+	return super(state, force)
+func transition_to_dash(state: CharacterState, force: bool) -> bool:
+	return super(state, force)
+
+func can_cancel_into_normal(state: CharacterState) -> bool:
+	match state.normal_priority:
+		NormalPriorities.unset:
+			return false
+		NormalPriorities.FiveA:
+			return fiveA_transitionable
+		NormalPriorities.FiveB:
+			return fiveB_transitionable
+		NormalPriorities.FiveC:
+			return fiveC_transitionable
+		NormalPriorities.FiveD:
+			return fiveD_transitionable
+		NormalPriorities.SixA:
+			return sixA_transitionable
+		NormalPriorities.SixB:
+			return sixB_transitionable
+		NormalPriorities.SixC:
+			return sixC_transitionable
+		NormalPriorities.SixD:
+			return sixD_transitionable
+		NormalPriorities.FourA:
+			return fourA_transitionable
+		NormalPriorities.FourB:
+			return fourB_transitionable
+		NormalPriorities.FourC:
+			return fourC_transitionable
+		NormalPriorities.FourD:
+			return fourD_transitionable
+		NormalPriorities.TwoA:
+			return twoA_transitionable
+		NormalPriorities.TwoB:
+			return twoB_transitionable
+		NormalPriorities.TwoC:
+			return twoC_transitionable
+		NormalPriorities.TwoD:
+			return twoD_transitionable
+		NormalPriorities.ThreeA:
+			return threeA_transitionable
+		NormalPriorities.ThreeB:
+			return threeB_transitionable
+		NormalPriorities.ThreeC:
+			return threeC_transitionable
+		NormalPriorities.ThreeD:
+			return threeD_transitionable
+		NormalPriorities.OneA:
+			return oneA_transitionable
+		NormalPriorities.OneB:
+			return oneB_transitionable
+		NormalPriorities.OneC:
+			return oneC_transitionable
+		NormalPriorities.OneD:
+			return oneD_transitionable
+	return false
