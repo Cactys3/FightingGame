@@ -1,28 +1,50 @@
-[gd_scene load_steps=9 format=3 uid="uid://26od1wt8jm1x"]
+[gd_scene load_steps=13 format=3 uid="uid://26od1wt8jm1x"]
 
 [ext_resource type="Script" uid="uid://d0ojokd1muaxr" path="res://BasicStates/BasicBackwardWalk.gd" id="1_i3xm4"]
-[ext_resource type="Texture2D" uid="uid://douiq1xlquod" path="res://Characters/Default/States/Stand/Character_Stand.png" id="2_hbvy3"]
+[ext_resource type="Texture2D" uid="uid://d0rp0pepiwkkb" path="res://Characters/Default/States/ForwardWalk/Character_Forward_Walk.png" id="2_hbvy3"]
 [ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="3_e7wd8"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hbvy3"]
+atlas = ExtResource("2_hbvy3")
+region = Rect2(784, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e7wd8"]
+atlas = ExtResource("2_hbvy3")
+region = Rect2(672, 0, 112, 152)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4hghe"]
 atlas = ExtResource("2_hbvy3")
-region = Rect2(0, 0, 112, 152)
+region = Rect2(560, 0, 112, 152)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nr2oe"]
 atlas = ExtResource("2_hbvy3")
-region = Rect2(112, 0, 112, 152)
+region = Rect2(448, 0, 112, 152)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_nrfqu"]
 atlas = ExtResource("2_hbvy3")
-region = Rect2(224, 0, 112, 152)
+region = Rect2(336, 0, 112, 152)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7usdr"]
 atlas = ExtResource("2_hbvy3")
-region = Rect2(336, 0, 112, 152)
+region = Rect2(224, 0, 112, 152)
 
-[sub_resource type="SpriteFrames" id="SpriteFrames_wqqxx"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_wqqxx"]
+atlas = ExtResource("2_hbvy3")
+region = Rect2(112, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_romre"]
+atlas = ExtResource("2_hbvy3")
+region = Rect2(0, 0, 112, 152)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4cy5s"]
 animations = [{
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hbvy3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e7wd8")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4hghe")
 }, {
@@ -34,6 +56,12 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7usdr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wqqxx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_romre")
 }],
 "loop": true,
 "name": &"default",
@@ -45,16 +73,22 @@ metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [node name="BackwardWalk" type="Node2D"]
 script = ExtResource("1_i3xm4")
-state_switching_priority = 1
-blocking = true
-inaction_transitionable = true
+state_name = "BackwardWalk"
+state_switching_priority = 2
+can_block = true
+stand_transitionable = true
+crouch_transitionable = true
 movement_transitionable = true
+jump_transitionable = true
+dash_transitionable = true
 normal_transitionable = true
 grab_transitionable = true
 special_transitionable = true
 parry_transitionable = true
 super_transitionable = true
 ultimate_transitionable = true
-drag = 0.0
+falling_transitionable = true
+movespeed_sign_negative = true
 movespeed = 2.0
-animation = SubResource("SpriteFrames_wqqxx")
+loop = true
+animation = SubResource("SpriteFrames_4cy5s")

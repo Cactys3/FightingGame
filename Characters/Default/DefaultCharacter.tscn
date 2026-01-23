@@ -1,15 +1,24 @@
-[gd_scene load_steps=5 format=3 uid="uid://b8xfhu3qychcm"]
+[gd_scene load_steps=9 format=3 uid="uid://b8xfhu3qychcm"]
 
 [ext_resource type="Script" uid="uid://bev3ppuhylgl5" path="res://Characters/Default/default_character.gd" id="1_40854"]
 [ext_resource type="PackedScene" uid="uid://ct5gccd03pmlu" path="res://Characters/Default/States/Stand/Stand.tscn" id="2_rmk8e"]
 [ext_resource type="PackedScene" uid="uid://bfn43q8n417k7" path="res://Characters/Default/States/ForwardWalk/ForwardWalk.tscn" id="3_jw5o7"]
+[ext_resource type="PackedScene" uid="uid://di64gc13a78ym" path="res://Characters/Default/States/Crouch/crouch.tscn" id="3_qpomt"]
 [ext_resource type="PackedScene" uid="uid://26od1wt8jm1x" path="res://Characters/Default/States/BackwardWalk/BackwardWalk.tscn" id="4_kclne"]
+[ext_resource type="PackedScene" uid="uid://baqojmvtb862f" path="res://Characters/Default/States/Fall/fall.tscn" id="5_kclne"]
+[ext_resource type="PackedScene" uid="uid://lqnik2qfs4h0" path="res://Characters/Default/States/Jump/jump.tscn" id="5_sikfd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kclne"]
+radius = 61.008198
 
 [node name="DefaultCharacter" type="Node2D"]
 script = ExtResource("1_40854")
 stand = ExtResource("2_rmk8e")
+crouch = ExtResource("3_qpomt")
 forward_walk = ExtResource("3_jw5o7")
 backward_walk = ExtResource("4_kclne")
+jump = ExtResource("5_sikfd")
+fall = ExtResource("5_kclne")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 2
@@ -17,3 +26,11 @@ texture_filter = 2
 [node name="Hitbox" type="Area2D" parent="."]
 
 [node name="Hurtbox" type="Area2D" parent="."]
+
+[node name="GroundCollider" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GroundCollider"]
+visible = false
+shape = SubResource("CircleShape2D_kclne")

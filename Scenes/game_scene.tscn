@@ -3,7 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://c3em1ktpp6p4j" path="res://Art/Testing/Ground/Ground.png" id="1_x87qo"]
 [ext_resource type="PackedScene" uid="uid://b8xfhu3qychcm" path="res://Characters/Default/DefaultCharacter.tscn" id="2_b6fju"]
 
-[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_b6fju"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b6fju"]
+size = Vector2(3262, 1472)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_x87qo"]
 atlas = ExtResource("1_x87qo")
@@ -22,12 +23,13 @@ animations = [{
 
 [node name="GameScene" type="Node2D"]
 
-[node name="Ground" type="Area2D" parent="."]
+[node name="Ground" type="Area2D" parent="." groups=["ground"]]
 position = Vector2(0, 360)
+collision_layer = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Ground"]
-position = Vector2(0, -34)
-shape = SubResource("WorldBoundaryShape2D_b6fju")
+position = Vector2(276, 702)
+shape = SubResource("RectangleShape2D_b6fju")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Ground"]
 position = Vector2(320, -180)

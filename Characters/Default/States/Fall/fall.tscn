@@ -1,0 +1,49 @@
+[gd_scene load_steps=7 format=3 uid="uid://baqojmvtb862f"]
+
+[ext_resource type="Script" uid="uid://cl3oi42i611po" path="res://BasicStates/BasicFall.gd" id="1_prbwk"]
+[ext_resource type="Texture2D" uid="uid://cl44ktwex6uo2" path="res://Characters/Default/States/Fall/Character_Fall.png" id="2_m7q46"]
+[ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="3_txnqa"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o3bhx"]
+atlas = ExtResource("2_m7q46")
+region = Rect2(0, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_abxf8"]
+atlas = ExtResource("2_m7q46")
+region = Rect2(112, 0, 112, 152)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_jih2c"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o3bhx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_abxf8")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+script = ExtResource("3_txnqa")
+stall = 15
+metadata/_custom_type_script = "uid://mka3ildkshw6"
+
+[node name="Fall" type="Node2D"]
+script = ExtResource("1_prbwk")
+state_name = "Fall"
+state_switching_priority = 11
+can_block = true
+stand_transitionable = true
+air_dash_transitionable = true
+air_normal_transitionable = true
+air_grab_transitionable = true
+air_special_transitionable = true
+air_super_transitionable = true
+air_ultimate_transitionable = true
+airborne = true
+drag_x = 0.0
+drag_y = 0.05
+gravity = 0.3
+loop = true
+animation = SubResource("SpriteFrames_jih2c")

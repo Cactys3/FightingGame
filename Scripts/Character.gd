@@ -18,32 +18,41 @@ var current_state: CharacterState
 var input_buffer: InputBuffer = InputBuffer.new()
 var velocity: Vector2 = Vector2.ZERO
 var facing_right: bool = true
+var ground_ray: RayCast2D = RayCast2D.new()
 ## Basic States
-@export_group("Basic States")
+@export_group("Ground States")
 @export var stand: PackedScene
 @export var crouch: PackedScene
 @export var forward_walk: PackedScene 
 @export var backward_walk: PackedScene
 @export var forward_dash: PackedScene
 @export var backward_dash: PackedScene
+@export_group("Air States")
 @export var jump: PackedScene
-		#- jump squat
-		#- airborne
-		#- landing squat
-	#- jump back
-	#- jump forward
-## Attack States
+@export var fall: PackedScene
 
+## Attack States
+@export_group("Attack States")
 ## Defense States
-@export var stand_block: PackedScene
-@export var crouch_block: PackedScene
-@export var hitsun: PackedScene
+@export_group("Defense States")
+@export var stand_blockstun: PackedScene
+@export var stand_hitsun: PackedScene
+@export var crouch_blockstun: PackedScene
+@export var crouch_hitsun: PackedScene
+@export var air_blockstun: PackedScene
+@export var air_hitsun: PackedScene
 	#- air block
 	#- grounded combo (stand)
 	#- grounded combo (crouch)
 	#- aerial combo (juggle)
 
 func _ready() -> void:
+	get_tree().debug_collisions_hint = true
+	add_child(ground_ray)
+	ground_ray.enabled = true
+	ground_ray.target_position = ground_ray.position + Vector2(0, 70)
+	ground_ray.collide_with_areas = true
+	ground_ray.collide_with_bodies = true
 	change_state(stand.instantiate())
 ## Called when a state change is decided upon
 func change_state(new_state: CharacterState):
@@ -61,9 +70,10 @@ func set_sprite(sprite: Texture2D):
 func process_movement():
 	position += velocity
 func add_movement(added_velocity: Vector2):
-	print("add: " + str(added_velocity))
+	#print("Add Movement: " + str(added_velocity))
 	velocity += added_velocity
 func set_movement(new_velocity: Vector2):
+	#print("Set Movement: " + str(new_velocity))
 	velocity = new_velocity
 ## Returns a setup InputState based on InputBuffer and Input.action_pressed
 func get_inputs() -> InputState:
@@ -120,6 +130,8 @@ func get_inputs() -> InputState:
 		state.start = true
 	if Input.is_action_pressed(BACK) || input_buffer.is_buffered(BACK):
 		state.back = true
+	## If only buffering Left but currently pressing Right, Right should win?
+	
 	## SOCD - Neutral Up Wins
 	if state.up && state.down:
 		state.down = false
@@ -127,7 +139,10 @@ func get_inputs() -> InputState:
 		state.left = false
 		state.right = false
 	return state
-
+func get_grounded() -> bool:
+	if ground_ray.is_colliding():
+		return ground_ray.get_collider().is_in_group("ground")
+	return false
 ## A bool for each standard input, used for sending current InputState to a CharacterState
 class InputState:
 	var up: bool = false

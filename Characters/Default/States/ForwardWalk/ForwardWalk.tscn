@@ -1,28 +1,47 @@
-[gd_scene load_steps=9 format=3 uid="uid://bfn43q8n417k7"]
+[gd_scene load_steps=13 format=3 uid="uid://bfn43q8n417k7"]
 
 [ext_resource type="Script" uid="uid://dlkc5nynftvu4" path="res://BasicStates/BasicForwardWalk.gd" id="1_xk2i1"]
-[ext_resource type="Texture2D" uid="uid://douiq1xlquod" path="res://Characters/Default/States/Stand/Character_Stand.png" id="2_mg0p4"]
+[ext_resource type="Texture2D" uid="uid://d0rp0pepiwkkb" path="res://Characters/Default/States/ForwardWalk/Character_Forward_Walk.png" id="2_mg0p4"]
 [ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="3_26k7w"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_rwio0"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_26k7w"]
 atlas = ExtResource("2_mg0p4")
 region = Rect2(0, 0, 112, 152)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_mkl13"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_rwio0"]
 atlas = ExtResource("2_mg0p4")
 region = Rect2(112, 0, 112, 152)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_d2dcu"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_mkl13"]
 atlas = ExtResource("2_mg0p4")
 region = Rect2(224, 0, 112, 152)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_8im4d"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_d2dcu"]
 atlas = ExtResource("2_mg0p4")
 region = Rect2(336, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8im4d"]
+atlas = ExtResource("2_mg0p4")
+region = Rect2(448, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v3m5v"]
+atlas = ExtResource("2_mg0p4")
+region = Rect2(560, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cg6uc"]
+atlas = ExtResource("2_mg0p4")
+region = Rect2(672, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ceni"]
+atlas = ExtResource("2_mg0p4")
+region = Rect2(784, 0, 112, 152)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_v3m5v"]
 animations = [{
 "frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_26k7w")
+}, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_rwio0")
 }, {
@@ -34,27 +53,41 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_8im4d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v3m5v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cg6uc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1ceni")
 }],
 "loop": true,
 "name": &"default",
 "speed": 5.0
 }]
 script = ExtResource("3_26k7w")
-stall = 10
+stall = 5
 metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [node name="ForwardWalk" type="Node2D"]
 script = ExtResource("1_xk2i1")
-state_switching_priority = 1
-inaction_transitionable = true
+state_name = "ForwardWalk"
+state_switching_priority = 2
+can_block = true
+stand_transitionable = true
+crouch_transitionable = true
 movement_transitionable = true
+jump_transitionable = true
+dash_transitionable = true
 normal_transitionable = true
 grab_transitionable = true
 special_transitionable = true
 parry_transitionable = true
 super_transitionable = true
 ultimate_transitionable = true
-drag = 0.0
+falling_transitionable = true
 movespeed = 3.0
 loop = true
 animation = SubResource("SpriteFrames_v3m5v")

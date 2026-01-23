@@ -1,0 +1,54 @@
+[gd_scene load_steps=8 format=3 uid="uid://lqnik2qfs4h0"]
+
+[ext_resource type="Script" uid="uid://b11x860yekqrr" path="res://BasicStates/BasicJump.gd" id="1_d1viv"]
+[ext_resource type="Texture2D" uid="uid://cjpfl1hh7erri" path="res://Characters/Default/States/Jump/Character_Jump.png" id="2_kaj2l"]
+[ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="3_uqn7w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rutk0"]
+atlas = ExtResource("2_kaj2l")
+region = Rect2(0, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qaf73"]
+atlas = ExtResource("2_kaj2l")
+region = Rect2(112, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2bmd"]
+atlas = ExtResource("2_kaj2l")
+region = Rect2(224, 0, 112, 152)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vyixo"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rutk0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qaf73")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v2bmd")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+script = ExtResource("3_uqn7w")
+metadata/_custom_type_script = "uid://mka3ildkshw6"
+
+[node name="Jump" type="Node2D"]
+script = ExtResource("1_d1viv")
+jump_speed = 3.0
+state_name = "Jump"
+state_switching_priority = 3
+dash_transitionable = true
+normal_transitionable = true
+grab_transitionable = true
+special_transitionable = true
+parry_transitionable = true
+super_transitionable = true
+ultimate_transitionable = true
+falling_transitionable = true
+airborne = true
+drag_x = 0.0
+loop = true
+animation = SubResource("SpriteFrames_vyixo")
