@@ -55,5 +55,11 @@ size_flags_vertical = 3
 
 [node name="InputHistory_P1" parent="UI" instance=ExtResource("4_fiftr")]
 layout_mode = 0
-offset_right = 177.0
+offset_right = 95.0
 offset_bottom = 360.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="UI/InputHistory_P1"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Test"
+scroll_active = false

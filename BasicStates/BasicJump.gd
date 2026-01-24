@@ -10,11 +10,11 @@ func _init():
 
 @export_category("JumpState Specifics")
 ## How fast you move upward for 'jumpframes'
-@export var jump_speed: float = 3
+@export var jump_impulse: float = 8
 ## How fast you move forward
-@export var jump_speed_x_front: float = 1
+@export var jump_speed_x_front: float = 4
 ## How fast you move backward
-@export var jump_speed_x_back: float = 1
+@export var jump_speed_x_back: float = 2
 ## How many frames you have to cancel a jump before it goes off
 @export var jump_startup_frames: int = 4
 ## After startup, How many frames you move upward before transitioning to 'fall' state where you can use moves
@@ -25,7 +25,7 @@ var total_frames:
 enum jump_types {back, neutral, front}
 var jump_type = jump_types.neutral
 var startup_complete: bool = false
-
+var applied_impulse: bool = false
 func enable_state(chara: Character):
 	super(chara)
 	character.set_movement(Vector2(character.velocity.x, 0))
@@ -59,22 +59,21 @@ func advance_frame():
 		disable_all_transitionability()
 		falling_transitionable = true
 		getting_hit_transitionable = true
+func check_fall():
 	## If total frames, we are done jumping and can force a fall
 	if frame >= total_frames:
 		## Force Add
 		state_queue.force_add(character.fall.instantiate(), falling_buffer)
-
 func check_jump():
 	pass
 
 ## Overwrite with jump movement
 func process_movement():
-	print("can jump: " + str(startup_complete))
-	if startup_complete:
+	if startup_complete && !applied_impulse:
 		var movement_sign_offset: int = 1
 		if !character.facing_right:
 			movement_sign_offset = -1
-		var new_velocity: Vector2 = Vector2(0, -jump_speed)
+		var new_velocity: Vector2 = Vector2(0, -jump_impulse)
 		match(jump_type):
 			jump_types.back:
 				new_velocity = Vector2(movement_sign_offset * -jump_speed_x_back, new_velocity.y)
@@ -82,5 +81,9 @@ func process_movement():
 				new_velocity = Vector2(0, new_velocity.y)
 			jump_types.front:
 				new_velocity = Vector2(movement_sign_offset * jump_speed_x_front, new_velocity.y)
+		applied_impulse = true
 		character.add_movement(new_velocity)
 	character.process_movement()
+
+func transition_to_state(state: CharacterState, force_unless_hit: bool) -> bool:
+	return super(state, force_unless_hit)

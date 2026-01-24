@@ -42,6 +42,10 @@ enum StateSwitchingPriorities {unset, crouch, stand, movement, jump, dash, norma
 @export var drag_x: float = 0.1
 @export var drag_y: float = 0
 @export var gravity: float = 0
+@export var max_velocity_up: float = 10
+@export var max_velocity_down: float = 8
+@export var max_velocity_front: float = 8
+@export var max_velocity_back: float = 8
 @export var movespeed: float = 0
 @export_category("Animation Properties")
 ## Requires 'stand_transitionable = true'
@@ -54,6 +58,9 @@ enum StateSwitchingPriorities {unset, crouch, stand, movement, jump, dash, norma
 ## Current Frame Variables, setup each frame
 var pressed_crouch: bool = false
 var pressed_jump: bool = false
+## Debug Variables
+var frames_spent_on_state: int = 0
+
 ## State Buffers
 const unset_buffer: int = 0
 const crouch_buffer: int = 0
@@ -87,7 +94,7 @@ func enable_state(chara: Character):
 		character.set_movement(Vector2.ZERO)
 ## Disables this state when transitioning to another state
 func disable_state():
-	pass
+	GameManager.instance.add_input_history(true, state_name, str(frames_spent_on_state))# + "." + StateSwitchingPriorities.keys()[self.state_switching_priority])
 ## 60 FPS Process
 func _physics_process(_delta: float) -> void:
 	if !enabled:
@@ -104,8 +111,10 @@ func _physics_process(_delta: float) -> void:
 	check_state_queue()
 ## Process Methods
 func advance_frame():
-	state_queue.advance_frame()
 	frame += 1 
+	state_queue.advance_frame()
+	frames_spent_on_state += 1
+	GameManager.instance.change_input_history(true, state_name, str(frames_spent_on_state), 0)
 ## Set Animation based on framecount, loop if desired
 func advance_animation():
 	if animation.go_next_or_stall(character) && animation.is_at_end():
@@ -251,8 +260,8 @@ func process_movement():
 				character.velocity.y = 0
 	else:
 		character.set_movement(Vector2(character.velocity.x, 0))
+	character.process_terminal_velocity(max_velocity_up, max_velocity_down, max_velocity_front, max_velocity_back)
 	character.process_movement()
-
 ## Helper Methods
 func forward_input() -> bool:
 	return (input_state.left && !character.facing_right) || (input_state.right && character.facing_right)

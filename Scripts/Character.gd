@@ -96,6 +96,18 @@ func set_sprite(sprite: Texture2D):
 ## Called Once Per Frame to Handle Movement
 func process_movement():
 	position += velocity
+func process_terminal_velocity(up, down, front, back):
+	if up != 0 && sign(velocity.y) < 0 && velocity.abs().y > abs(up):
+		velocity.y =  -abs(up)
+	if down != 0 && sign(velocity.y) > 0 && velocity.abs().y > abs(down):
+		velocity.y =  abs(down)
+	var facing_direction_offset: int = 1
+	if !facing_right:
+		facing_direction_offset = -1
+	if front != 0 && sign(velocity.x) < 0 && velocity.abs().x > abs(front):
+		velocity.x =  -abs(front) * facing_direction_offset
+	if back != 0 && sign(velocity.x) > 0 && velocity.abs().x > abs(back):
+		velocity.x =  abs(back) * facing_direction_offset
 func add_movement(added_velocity: Vector2):
 	velocity += added_velocity
 func set_movement(new_velocity: Vector2):

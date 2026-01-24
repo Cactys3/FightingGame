@@ -37,15 +37,17 @@ metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [node name="Jump" type="Node2D"]
 script = ExtResource("1_d1viv")
-dash_transitionable = true
-normal_transitionable = true
-grab_transitionable = true
-special_transitionable = true
-parry_transitionable = true
-super_transitionable = true
-ultimate_transitionable = true
-falling_transitionable = true
+air_dash_transitionable = true
+air_normal_transitionable = true
+air_grab_transitionable = true
+air_special_transitionable = true
+air_super_transitionable = true
+air_ultimate_transitionable = true
 airborne = true
 drag_x = 0.0
+max_velocity_up = 0.0
+max_velocity_down = 0.0
+max_velocity_front = 0.0
+max_velocity_back = 0.0
 loop = true
 animation = SubResource("SpriteFrames_vyixo")

@@ -31,7 +31,6 @@ metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [node name="Fall" type="Node2D"]
 script = ExtResource("1_prbwk")
-state_name = "Fall"
 can_block = true
 stand_transitionable = true
 air_dash_transitionable = true
@@ -43,6 +42,6 @@ air_ultimate_transitionable = true
 airborne = true
 drag_x = 0.0
 drag_y = 0.05
-gravity = 0.3
+gravity = 0.4
 loop = true
 animation = SubResource("SpriteFrames_jih2c")
