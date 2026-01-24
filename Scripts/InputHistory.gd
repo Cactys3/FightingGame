@@ -15,8 +15,8 @@ func add(text: String):
 	_trim_history()
 ## Changes the input text of input history at 'index' to 'text'
 func change(text: String, index: int):
-	var child: RichTextLabel = get_child(index)
-	if child: 
+	if get_child_count() - 1 >= index:
+		var child: RichTextLabel = get_child(index)
 		child.text = text
 	elif index == 0:
 		add(text)
