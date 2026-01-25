@@ -11,8 +11,11 @@ var input_state: Character.InputState
 var state_name: String = "unset"
 var state_switching_priority: StateSwitchingPriorities = StateSwitchingPriorities.unset
 enum StateSwitchingPriorities {unset, crouch, stand, movement, jump, dash, normal, grab, special, parry, _super, ultimate, falling, air_dash, air_normal, air_grab, air_special, air_super, air_ultimate, getting_hit}
+@export var hitbox_parent: Area2D
+@export var hurtbox_parent: Area2D
 @export var can_block: bool = false
 @export var throwable: bool = true
+@export var collider_boxes: Array[CollisionBox]
 @export_category("Transition Properties")
 @export var stand_transitionable: bool = false
 @export var crouch_transitionable: bool = false
@@ -53,6 +56,7 @@ enum StateSwitchingPriorities {unset, crouch, stand, movement, jump, dash, norma
 ## Requires 'crouch_transitionable = true'
 @export var crouch_on_anim_done: bool = false
 @export var loop: bool
+@export var next_state_on_animation_end: PackedScene
 @export var animation: AnimSprites
 @export var colliders: Array[CollisionBox]
 ## Current Frame Variables, setup each frame
@@ -82,11 +86,11 @@ const air_special_buffer: int = 4
 const air_super_buffer: int = 4
 const air_ultimate_buffer: int = 4
 const getting_hit_buffer: int = 0
+
 func _init():
 	pass
 ## Sets this state up as the currently active state for the given character
 func enable_state(chara: Character):
-	animation.reset(chara)
 	character = chara
 	frame = 0
 	enabled = true
@@ -117,32 +121,36 @@ func advance_frame():
 	GameManager.instance.change_input_history(true, state_name, str(frames_spent_on_state), 0)
 ## Set Animation based on framecount, loop if desired
 func advance_animation():
-	if animation.go_next_or_stall(character) && animation.is_at_end():
-		if loop:
-			animation.reset(character)
-		else:
-			pass ## TODO: go to next state bud
+	animation.display_frame(frame, loop, character)
+	if !loop && animation.is_at_end(frame):
+		print("Anim Done, Change called on: " + str(frame))
+		if next_state_on_animation_end:
+			state_queue.force_add(character.next_state_on_animation_end.instantiate(), stand_buffer)
+		elif stand_on_anim_done:
+			state_queue.force_add(character.stand.instantiate(), stand_buffer)
+		elif crouch_on_anim_done:
+			state_queue.force_add(character.crouch.instantiate(), crouch_buffer)
 ## Setup/Enable hurt/hitboxes based on framecount 
 func setup_collision():
-	for shape in colliders:
-		## If CollisionBox should be active on this frame
-		if shape.active_frames.has(frame):
-			var new_collider: CollisionShape2D = CollisionShape2D.new()
-			new_collider.shape = shape
-			if shape.hitbox:
-				character.hitbox.add_child(new_collider)
+	## If CollisionBox should be active on this frame
+	if hurtbox_parent:
+		for box: CollisionBox in hurtbox_parent.get_children():
+			box.p1 = character.p1
+			if box.active_frames.has(frame) || box.always_active:
+				box.enable(frame)
 			else:
-				character.hurtbox.add_child(new_collider)
-			active_colliders.append(new_collider)
-		else:
-			for collider in active_colliders:
+				box.disable(frame)
+	if hitbox_parent:
+		for box: CollisionBox in hitbox_parent.get_children():
+			box.p1 = character.p1
+			if box.active_frames.has(frame) || box.always_active:
+				box.enable(frame)
+			else:
+				box.disable(frame)
 				## Disable if CollisionBox is enabled
-				if collider.shape == shape:
-					active_colliders.erase(collider)
-					collider.queue_free()
 ## Set Variables that happen at specific times during animations/states
 func process_variables():
-	check_anim_done()
+	pass
 ## Go through each input and check if it's being pressed, then set boolean var values for this frame to be handled in end step
 func grab_inputs():
 	input_state = character.get_inputs()
@@ -173,18 +181,8 @@ func check_state_queue():
 			pass#print("Sucess: " + state_name + "." + StateSwitchingPriorities.keys()[self.state_switching_priority] + " --> " + state.state_name + "." + StateSwitchingPriorities.keys()[state.state_switching_priority])
 		else:
 			pass#print("Fail: " + state_name + "." + StateSwitchingPriorities.keys()[self.state_switching_priority] + " --> " + state.state_name + "." + StateSwitchingPriorities.keys()[state.state_switching_priority])
-	## If didn't just change state, reduce state change buffers
 	## TODO: save state change buffers on change state and send to next state? probably not need unless i think of a reason it is
-	#for state in state_queue:
-	#	state.reduce_buffer_or_delete(state_queue)
-
 ## Checks
-func check_anim_done():
-	if animation.is_at_end():
-		if stand_on_anim_done:
-			state_queue.add(character.stand.instantiate(), stand_buffer)
-		elif crouch_on_anim_done:
-			state_queue.add(character.crouch.instantiate(), crouch_buffer)
 func check_a():
 	if input_state.A:
 		## Check Command Normals
@@ -272,7 +270,6 @@ func equals(other: CharacterState) -> bool:
 ## Happens after all process but before state change
 func process_unique():
 	pass
-
 func disable_all_transitionability():
 	stand_transitionable = false
 	crouch_transitionable = false
@@ -293,8 +290,6 @@ func disable_all_transitionability():
 	air_super_transitionable = false
 	air_ultimate_transitionable = false
 	getting_hit_transitionable = false
-
-## Not used as of now
 class StateQueue:
 	var queue: Array[StateQueueItem]
 	func sort_custom(method: Callable):

@@ -18,9 +18,9 @@ func _init():
 ## How fast you move backward
 @export var jump_speed_x_back: float = 2
 ## How many frames you have to cancel a jump before it goes off
-@export var jump_startup_frames: int = 4
+@export var jump_startup_frames: int = 3
 ## After startup, How many frames you move upward before transitioning to 'fall' state where you can use moves
-@export var jump_active_frames: int = 4
+@export var jump_active_frames: int = 1
 var total_frames:
 	get():
 		return jump_startup_frames + jump_active_frames

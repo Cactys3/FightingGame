@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://bcgpuh6qp3uto"]
+[gd_scene load_steps=10 format=3 uid="uid://bcgpuh6qp3uto"]
 
 [ext_resource type="Script" uid="uid://l163ku3jce3i" path="res://Characters/Default/States/Neutral_A/CactusNeutralA.gd" id="1_u6uvo"]
 [ext_resource type="Texture2D" uid="uid://cw0clmc80spqf" path="res://Characters/Default/States/Neutral_A/Neutral_A.png" id="2_u1don"]
 [ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="3_33gwa"]
+[ext_resource type="Script" uid="uid://dxujdli4sq6rk" path="res://Scripts/CollisionBox.gd" id="4_33gwa"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2v3ir"]
 atlas = ExtResource("2_u1don")
@@ -33,10 +34,12 @@ animations = [{
 "speed": 5.0
 }]
 script = ExtResource("3_33gwa")
-stall = 0
 metadata/_custom_type_script = "uid://mka3ildkshw6"
 
-[node name="CactusNeutralA" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2v3ir"]
+size = Vector2(68, 32)
+
+[node name="CactusNeutralA" type="Node2D" node_paths=PackedStringArray("hitbox_parent", "hurtbox_parent")]
 script = ExtResource("1_u6uvo")
 startup_frames = 6
 active_frames = 4
@@ -44,6 +47,8 @@ recovery_frames = 8
 block_stun = 10
 hit_stun = 12
 fiveA_transitionable = true
+hitbox_parent = NodePath("Hitbox_Parent")
+hurtbox_parent = NodePath("Hurtbox_Parent")
 normal_transitionable = true
 special_transitionable = true
 super_transitionable = true
@@ -51,3 +56,22 @@ ultimate_transitionable = true
 stop_momentum = true
 stand_on_anim_done = true
 animation = SubResource("SpriteFrames_q2veu")
+
+[node name="Hitbox_Parent" type="Area2D" parent="."]
+
+[node name="CollisionBox" type="CollisionShape2D" parent="Hitbox_Parent"]
+visible = false
+position = Vector2(54, -2)
+shape = SubResource("RectangleShape2D_2v3ir")
+debug_color = Color(0.9607843, 0, 0.5176471, 0.14509805)
+script = ExtResource("4_33gwa")
+is_hitbox = true
+active_frames = Array[int]([7, 8, 9, 10])
+metadata/_custom_type_script = "uid://dxujdli4sq6rk"
+
+[node name="Hurtbox_Parent" type="Area2D" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = SubResource("SpriteFrames_q2veu")
+frame_progress = 0.62187505

@@ -15,13 +15,12 @@ const BACK: String = "Back"
 const movement_buffer: int = 2
 const attack_buffer: int = 2
 @onready var anim: Sprite2D = $Sprite2D
-@onready var hitbox: Area2D = $Hitbox
-@onready var hurtbox: Area2D = $Hurtbox
 var current_state: CharacterState
 var input_buffer: InputBuffer = InputBuffer.new()
 var velocity: Vector2 = Vector2.ZERO
 var facing_right: bool = true
 var ground_ray: RayCast2D = RayCast2D.new()
+var p1: bool = true
 ## Basic States
 @export_group("Ground States")
 @export var stand: PackedScene

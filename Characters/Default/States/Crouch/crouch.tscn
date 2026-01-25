@@ -15,7 +15,7 @@ region = Rect2(112, 0, 112, 152)
 [sub_resource type="SpriteFrames" id="SpriteFrames_ild8q"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 2.0,
 "texture": SubResource("AtlasTexture_yitlo")
 }, {
 "duration": 1.0,
@@ -31,8 +31,6 @@ metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [node name="Crouch" type="Node2D"]
 script = ExtResource("1_ym20u")
-state_name = "Crouch"
-state_switching_priority = 0
 can_block = true
 stand_transitionable = true
 jump_transitionable = true

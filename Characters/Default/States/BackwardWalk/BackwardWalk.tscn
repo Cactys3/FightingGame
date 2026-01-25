@@ -73,8 +73,6 @@ metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [node name="BackwardWalk" type="Node2D"]
 script = ExtResource("1_i3xm4")
-state_name = "BackwardWalk"
-state_switching_priority = 2
 can_block = true
 stand_transitionable = true
 crouch_transitionable = true

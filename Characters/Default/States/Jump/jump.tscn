@@ -19,7 +19,7 @@ region = Rect2(224, 0, 112, 152)
 [sub_resource type="SpriteFrames" id="SpriteFrames_vyixo"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 2.0,
 "texture": SubResource("AtlasTexture_rutk0")
 }, {
 "duration": 1.0,
