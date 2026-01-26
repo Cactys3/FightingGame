@@ -56,14 +56,14 @@ func advance_frame():
 		cancellable = false
 ## Check transitioning after animation is done
 func process_unique():
-	if animation.is_at_end(frame):
+	if frame >= startup_frames + active_frames + recovery_frames:#if animation.is_at_end(frame):
 		state_queue.force_add(character.stand.instantiate(), stand_buffer)
 func enable_state(chara: Character):
 	super(chara)
 ## Getting hit, handle punish/counter
 ## Handle Normal Priorities and cancels
 func transition_to_stand(state: CharacterState, force: bool) -> bool:
-	if animation.is_at_end(frame) && stand_on_anim_done:
+	if animation.is_at_end(frame):
 		return super(state, force)
 	return false
 func transition_to_normal(state: CharacterState, force: bool) -> bool:

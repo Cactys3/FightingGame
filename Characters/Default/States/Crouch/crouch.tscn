@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://di64gc13a78ym"]
+[gd_scene load_steps=9 format=3 uid="uid://di64gc13a78ym"]
 
 [ext_resource type="Script" uid="uid://tkiyehkendix" path="res://BasicStates/BasicCrouch.gd" id="1_ym20u"]
 [ext_resource type="Texture2D" uid="uid://b8vvk4r8ib1o1" path="res://Characters/Default/States/Crouch/Character_Crouch.png" id="2_l1m1p"]
 [ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="3_go671"]
+[ext_resource type="Script" uid="uid://dxujdli4sq6rk" path="res://Scripts/CollisionBox.gd" id="4_go671"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yitlo"]
 atlas = ExtResource("2_l1m1p")
@@ -29,8 +30,12 @@ script = ExtResource("3_go671")
 stall = 5
 metadata/_custom_type_script = "uid://mka3ildkshw6"
 
-[node name="Crouch" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_yitlo"]
+size = Vector2(102, 126)
+
+[node name="Crouch" type="Node2D" node_paths=PackedStringArray("hurtbox_parent")]
 script = ExtResource("1_ym20u")
+hurtbox_parent = NodePath("Hurtbox_Parent")
 can_block = true
 stand_transitionable = true
 jump_transitionable = true
@@ -46,3 +51,12 @@ crouching = true
 drag_x = 0.5
 loop = true
 animation = SubResource("SpriteFrames_ild8q")
+
+[node name="Hurtbox_Parent" type="Area2D" parent="."]
+
+[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent"]
+position = Vector2(6, 7)
+shape = SubResource("RectangleShape2D_yitlo")
+script = ExtResource("4_go671")
+always_active = true
+metadata/_custom_type_script = "uid://dxujdli4sq6rk"

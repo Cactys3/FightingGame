@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://lqnik2qfs4h0"]
+[gd_scene load_steps=10 format=3 uid="uid://lqnik2qfs4h0"]
 
 [ext_resource type="Script" uid="uid://b11x860yekqrr" path="res://BasicStates/BasicJump.gd" id="1_d1viv"]
 [ext_resource type="Texture2D" uid="uid://cjpfl1hh7erri" path="res://Characters/Default/States/Jump/Character_Jump.png" id="2_kaj2l"]
 [ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="3_uqn7w"]
+[ext_resource type="Script" uid="uid://dxujdli4sq6rk" path="res://Scripts/CollisionBox.gd" id="4_uqn7w"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rutk0"]
 atlas = ExtResource("2_kaj2l")
@@ -35,8 +36,12 @@ animations = [{
 script = ExtResource("3_uqn7w")
 metadata/_custom_type_script = "uid://mka3ildkshw6"
 
-[node name="Jump" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rutk0"]
+size = Vector2(102, 126)
+
+[node name="Jump" type="Node2D" node_paths=PackedStringArray("hurtbox_parent")]
 script = ExtResource("1_d1viv")
+hurtbox_parent = NodePath("Hurtbox_Parent")
 air_dash_transitionable = true
 air_normal_transitionable = true
 air_grab_transitionable = true
@@ -51,3 +56,12 @@ max_velocity_front = 0.0
 max_velocity_back = 0.0
 loop = true
 animation = SubResource("SpriteFrames_vyixo")
+
+[node name="Hurtbox_Parent" type="Area2D" parent="."]
+
+[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent"]
+position = Vector2(6, 7)
+shape = SubResource("RectangleShape2D_rutk0")
+script = ExtResource("4_uqn7w")
+always_active = true
+metadata/_custom_type_script = "uid://dxujdli4sq6rk"

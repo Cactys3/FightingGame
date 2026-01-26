@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://baqojmvtb862f"]
+[gd_scene load_steps=9 format=3 uid="uid://baqojmvtb862f"]
 
 [ext_resource type="Script" uid="uid://cl3oi42i611po" path="res://BasicStates/BasicFall.gd" id="1_prbwk"]
 [ext_resource type="Texture2D" uid="uid://cl44ktwex6uo2" path="res://Characters/Default/States/Fall/Character_Fall.png" id="2_m7q46"]
 [ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="3_txnqa"]
+[ext_resource type="Script" uid="uid://dxujdli4sq6rk" path="res://Scripts/CollisionBox.gd" id="4_txnqa"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_o3bhx"]
 atlas = ExtResource("2_m7q46")
@@ -29,8 +30,12 @@ script = ExtResource("3_txnqa")
 stall = 10
 metadata/_custom_type_script = "uid://mka3ildkshw6"
 
-[node name="Fall" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o3bhx"]
+size = Vector2(102, 126)
+
+[node name="Fall" type="Node2D" node_paths=PackedStringArray("hurtbox_parent")]
 script = ExtResource("1_prbwk")
+hurtbox_parent = NodePath("Hurtbox_Parent")
 can_block = true
 stand_transitionable = true
 air_dash_transitionable = true
@@ -45,3 +50,12 @@ drag_y = 0.05
 gravity = 0.4
 loop = true
 animation = SubResource("SpriteFrames_jih2c")
+
+[node name="Hurtbox_Parent" type="Area2D" parent="."]
+
+[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent"]
+position = Vector2(6, 7)
+shape = SubResource("RectangleShape2D_o3bhx")
+script = ExtResource("4_txnqa")
+always_active = true
+metadata/_custom_type_script = "uid://dxujdli4sq6rk"

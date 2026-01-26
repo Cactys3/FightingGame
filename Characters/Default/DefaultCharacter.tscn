@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b8xfhu3qychcm"]
+[gd_scene load_steps=11 format=3 uid="uid://b8xfhu3qychcm"]
 
 [ext_resource type="Script" uid="uid://bev3ppuhylgl5" path="res://Characters/Default/default_character.gd" id="1_40854"]
 [ext_resource type="PackedScene" uid="uid://ct5gccd03pmlu" path="res://Characters/Default/States/Stand/Stand.tscn" id="2_rmk8e"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://baqojmvtb862f" path="res://Characters/Default/States/Fall/fall.tscn" id="5_kclne"]
 [ext_resource type="PackedScene" uid="uid://lqnik2qfs4h0" path="res://Characters/Default/States/Jump/jump.tscn" id="5_sikfd"]
 [ext_resource type="PackedScene" uid="uid://bcgpuh6qp3uto" path="res://Characters/Default/States/Neutral_A/CactusNeutralA.tscn" id="8_3i6xb"]
+[ext_resource type="PackedScene" uid="uid://cj0tufaya08n4" path="res://Characters/Default/States/Neutral_B/CactusNeutralB.tscn" id="9_mo6d2"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kclne"]
 radius = 61.008198
@@ -21,6 +22,7 @@ backward_walk = ExtResource("4_kclne")
 jump = ExtResource("5_sikfd")
 fall = ExtResource("5_kclne")
 five_A = ExtResource("8_3i6xb")
+five_B = ExtResource("9_mo6d2")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 2

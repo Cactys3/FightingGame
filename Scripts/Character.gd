@@ -32,7 +32,6 @@ var p1: bool = true
 @export_group("Air States")
 @export var jump: PackedScene
 @export var fall: PackedScene
-
 ## Attack States
 @export_group("Attack States")
 @export var five_A: PackedScene

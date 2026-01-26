@@ -5,7 +5,6 @@ var character: Character
 var frame: int = 0
 var enabled: bool = false
 var state_queue: StateQueue = StateQueue.new()
-var active_colliders: Array[CollisionShape2D]
 var input_state: Character.InputState
 @export_category("Generic Properties")
 var state_name: String = "unset"
@@ -96,6 +95,7 @@ func enable_state(chara: Character):
 	enabled = true
 	if stop_momentum:
 		character.set_movement(Vector2.ZERO)
+	setup_collision()
 ## Disables this state when transitioning to another state
 func disable_state():
 	GameManager.instance.add_input_history(true, state_name, str(frames_spent_on_state))# + "." + StateSwitchingPriorities.keys()[self.state_switching_priority])
@@ -123,7 +123,6 @@ func advance_frame():
 func advance_animation():
 	animation.display_frame(frame, loop, character)
 	if !loop && animation.is_at_end(frame):
-		print("Anim Done, Change called on: " + str(frame))
 		if next_state_on_animation_end:
 			state_queue.force_add(character.next_state_on_animation_end.instantiate(), stand_buffer)
 		elif stand_on_anim_done:
@@ -136,17 +135,25 @@ func setup_collision():
 	if hurtbox_parent:
 		for box: CollisionBox in hurtbox_parent.get_children():
 			box.p1 = character.p1
-			if box.active_frames.has(frame) || box.always_active:
+			if (box.active_frames.has(frame) || box.always_active) && !box.inactive_frames.has(frame):
 				box.enable(frame)
+				if box.print_debug:
+					print("Hitbox for " + state_name + " Active on: " + str(frame))
 			else:
 				box.disable(frame)
+				if box.print_debug:
+					print("Hitbox for " + state_name + " Inactive on: " + str(frame))
 	if hitbox_parent:
 		for box: CollisionBox in hitbox_parent.get_children():
 			box.p1 = character.p1
-			if box.active_frames.has(frame) || box.always_active:
+			if (box.active_frames.has(frame) || box.always_active) && !box.inactive_frames.has(frame):
 				box.enable(frame)
+				if box.print_debug:
+					print("Hitbox for " + state_name + " Active on: " + str(frame))
 			else:
 				box.disable(frame)
+				if box.print_debug:
+					print("Hitbox for " + state_name + " Inactive on: " + str(frame))
 				## Disable if CollisionBox is enabled
 ## Set Variables that happen at specific times during animations/states
 func process_variables():
@@ -200,11 +207,53 @@ func check_a():
 			## Neutral
 			state_queue.add(character.five_A.instantiate(), normal_buffer)
 func check_b():
-	pass
+	if input_state.B:
+		## Check Command Normals
+		if backward_input() && character.four_B != null:
+			## Backwards
+			state_queue.add(character.four_B.instantiate(), normal_buffer)
+		## Forward
+		elif input_state.down && forward_input() && character.four_B != null:
+			## Down-Forward
+			state_queue.add(character.four_B.instantiate(), normal_buffer)
+		elif forward_input() && character.six_B != null:
+			## Forward
+			state_queue.add(character.six_B.instantiate(), normal_buffer)
+		elif character.five_B != null:
+			## Neutral
+			state_queue.add(character.five_B.instantiate(), normal_buffer)
 func check_c():
-	pass
+	if input_state.B:
+		## Check Command Normals
+		if backward_input() && character.four_C != null:
+			## Backwards
+			state_queue.add(character.four_C.instantiate(), normal_buffer)
+		## Forward
+		elif input_state.down && forward_input() && character.four_C != null:
+			## Down-Forward
+			state_queue.add(character.four_C.instantiate(), normal_buffer)
+		elif forward_input() && character.six_C != null:
+			## Forward
+			state_queue.add(character.six_C.instantiate(), normal_buffer)
+		elif character.five_C != null:
+			## Neutral
+			state_queue.add(character.five_C.instantiate(), normal_buffer)
 func check_d():
-	pass
+	if input_state.D:
+		## Check Command Normals
+		if backward_input() && character.four_D != null:
+			## Backwards
+			state_queue.add(character.four_D.instantiate(), normal_buffer)
+		## Forward
+		elif input_state.down && forward_input() && character.four_D != null:
+			## Down-Forward
+			state_queue.add(character.four_D.instantiate(), normal_buffer)
+		elif forward_input() && character.six_D != null:
+			## Forward
+			state_queue.add(character.six_D.instantiate(), normal_buffer)
+		elif character.five_D != null:
+			## Neutral
+			state_queue.add(character.five_D.instantiate(), normal_buffer)
 func check_forward_walk():
 	## Forward
 	if forward_input():
