@@ -37,19 +37,14 @@ shape = SubResource("RectangleShape2D_b6fju")
 position = Vector2(320, -180)
 sprite_frames = SubResource("SpriteFrames_fiftr")
 
-[node name="P1" parent="." instance=ExtResource("2_b6fju")]
-position = Vector2(172, 176)
-
-[node name="P2" parent="." instance=ExtResource("2_b6fju")]
-position = Vector2(422, 176)
+[node name="DefaultCharacter" parent="." instance=ExtResource("2_b6fju")]
+position = Vector2(282, 190)
 
 [node name="Managers" type="Node2D" parent="."]
 
-[node name="GameManager" parent="Managers" node_paths=PackedStringArray("P1", "P2", "InputHistory_P1", "InputHistory_P2") instance=ExtResource("3_6h5vk")]
-P1 = NodePath("../../P1")
-P2 = NodePath("../../P2")
+[node name="GameManager" parent="Managers" node_paths=PackedStringArray("P1", "InputHistory_P1") instance=ExtResource("3_6h5vk")]
+P1 = NodePath("../../DefaultCharacter")
 InputHistory_P1 = NodePath("../../UI/InputHistory_P1")
-InputHistory_P2 = NodePath("../../UI/InputHistory_P2")
 
 [node name="UI" type="Control" parent="."]
 layout_mode = 3
@@ -60,25 +55,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="InputHistory_P1" parent="UI" instance=ExtResource("4_fiftr")]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_top = -180.0
+layout_mode = 0
 offset_right = 177.0
-offset_bottom = 180.0
-grow_vertical = 2
-
-[node name="InputHistory_P2" parent="UI" instance=ExtResource("4_fiftr")]
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -177.0
-offset_top = -180.0
-offset_right = 0.0
-offset_bottom = 180.0
-grow_horizontal = 0
-grow_vertical = 2
+offset_bottom = 360.0

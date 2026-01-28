@@ -5,38 +5,27 @@ func _init():
 	super()
 	normal_priority = NormalPriorities.FiveA
 
-enum NormalPriorities {unset, FiveA, FiveB, FiveC, FiveD, SixA, SixB, SixC, SixD, FourA, FourB, FourC, FourD, TwoA, TwoB, TwoC, TwoD, ThreeA, ThreeB, ThreeC, ThreeD, OneA, OneB, OneC, OneD}
+enum NormalPriorities {unset, FiveA, FiveB, SixA, SixB, FourA, FourB, TwoA, TwoB, ThreeA, ThreeB, OneA, OneB}
 var normal_priority: NormalPriorities = NormalPriorities.unset
 @export var startup_frames: int = 0
 @export var active_frames: int = 0
 @export var recovery_frames: int = 0
 @export var block_stun: int = 0
 @export var hit_stun: int = 0
+@export var pushback_onhit: int = 0
 @export_group("Cancels")
 @export var fiveA_transitionable: bool = false
 @export var fiveB_transitionable: bool = false
-@export var fiveC_transitionable: bool = false
-@export var fiveD_transitionable: bool = false
 @export var sixA_transitionable: bool = false
 @export var sixB_transitionable: bool = false
-@export var sixC_transitionable: bool = false
-@export var sixD_transitionable: bool = false
 @export var fourA_transitionable: bool = false
 @export var fourB_transitionable: bool = false
-@export var fourC_transitionable: bool = false
-@export var fourD_transitionable: bool = false
 @export var twoA_transitionable: bool = false
 @export var twoB_transitionable: bool = false
-@export var twoC_transitionable: bool = false
-@export var twoD_transitionable: bool = false
 @export var threeA_transitionable: bool = false
 @export var threeB_transitionable: bool = false
-@export var threeC_transitionable: bool = false
-@export var threeD_transitionable: bool = false
 @export var oneA_transitionable: bool = false
 @export var oneB_transitionable: bool = false
-@export var oneC_transitionable: bool = false
-@export var oneD_transitionable: bool = false
 ## Current Frame Variables, setup each frame
 var currently_startup: bool = false
 var currently_active: bool = false
@@ -89,48 +78,24 @@ func can_cancel_into_normal(state: CharacterState) -> bool:
 			return fiveA_transitionable
 		NormalPriorities.FiveB:
 			return fiveB_transitionable
-		NormalPriorities.FiveC:
-			return fiveC_transitionable
-		NormalPriorities.FiveD:
-			return fiveD_transitionable
 		NormalPriorities.SixA:
 			return sixA_transitionable
 		NormalPriorities.SixB:
 			return sixB_transitionable
-		NormalPriorities.SixC:
-			return sixC_transitionable
-		NormalPriorities.SixD:
-			return sixD_transitionable
 		NormalPriorities.FourA:
 			return fourA_transitionable
 		NormalPriorities.FourB:
 			return fourB_transitionable
-		NormalPriorities.FourC:
-			return fourC_transitionable
-		NormalPriorities.FourD:
-			return fourD_transitionable
 		NormalPriorities.TwoA:
 			return twoA_transitionable
 		NormalPriorities.TwoB:
 			return twoB_transitionable
-		NormalPriorities.TwoC:
-			return twoC_transitionable
-		NormalPriorities.TwoD:
-			return twoD_transitionable
 		NormalPriorities.ThreeA:
 			return threeA_transitionable
 		NormalPriorities.ThreeB:
 			return threeB_transitionable
-		NormalPriorities.ThreeC:
-			return threeC_transitionable
-		NormalPriorities.ThreeD:
-			return threeD_transitionable
 		NormalPriorities.OneA:
 			return oneA_transitionable
 		NormalPriorities.OneB:
 			return oneB_transitionable
-		NormalPriorities.OneC:
-			return oneC_transitionable
-		NormalPriorities.OneD:
-			return oneD_transitionable
 	return false

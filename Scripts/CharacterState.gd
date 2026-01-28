@@ -5,7 +5,7 @@ var character: Character
 var frame: int = 0
 var enabled: bool = false
 var state_queue: StateQueue = StateQueue.new()
-var input_state: Character.InputState
+var input_state: Character.InputState = null
 @export_category("Generic Properties")
 var state_name: String = "unset"
 var state_switching_priority: StateSwitchingPriorities = StateSwitchingPriorities.unset
@@ -98,9 +98,9 @@ func enable_state(chara: Character):
 	setup_collision()
 ## Disables this state when transitioning to another state
 func disable_state():
-	GameManager.instance.add_input_history(true, state_name, str(frames_spent_on_state))# + "." + StateSwitchingPriorities.keys()[self.state_switching_priority])
+	GameManager.instance.add_input_history(character.p1, state_name, str(frames_spent_on_state))# + "." + StateSwitchingPriorities.keys()[self.state_switching_priority])
 ## 60 FPS Process
-func _physics_process(_delta: float) -> void:
+func process_frame() -> void:
 	if !enabled:
 		return
 	advance_frame()
@@ -118,7 +118,7 @@ func advance_frame():
 	frame += 1 
 	state_queue.advance_frame()
 	frames_spent_on_state += 1
-	GameManager.instance.change_input_history(true, state_name, str(frames_spent_on_state), 0)
+	GameManager.instance.change_input_history(character.p1, state_name, str(frames_spent_on_state), 0)
 ## Set Animation based on framecount, loop if desired
 func advance_animation():
 	animation.display_frame(frame, loop, character)
@@ -129,6 +129,14 @@ func advance_animation():
 			state_queue.force_add(character.stand.instantiate(), stand_buffer)
 		elif crouch_on_anim_done:
 			state_queue.force_add(character.crouch.instantiate(), crouch_buffer)
+
+func disable_collisions():
+	if hurtbox_parent:
+		for box: CollisionBox in hurtbox_parent.get_children():
+			box.disable(frame)
+	if hitbox_parent:
+		for box: CollisionBox in hitbox_parent.get_children():
+			box.disable(frame)
 ## Setup/Enable hurt/hitboxes based on framecount 
 func setup_collision():
 	## If CollisionBox should be active on this frame
@@ -170,7 +178,6 @@ func process_inputs():
 	check_a()
 	check_b()
 	check_c()
-	check_d()
 ## Go through each hurtbox and check if any opponent hitboxes are inside it. Go through each hitbox and check if any opponent hurtboxes are inside it.
 func process_collisions():
 	## for blocking check, just see if we are holding back and not using a move where we can't block
@@ -273,7 +280,7 @@ func check_fall():
 		state_queue.add(character.fall.instantiate(), falling_buffer)
 func process_movement():
 	var movement_sign_offset: int = 1
-	if !character.facing_right:
+	if !get_facing_right():
 		movement_sign_offset = -1
 	if movespeed_sign_negative:
 		movement_sign_offset *= -1
@@ -281,7 +288,7 @@ func process_movement():
 	var should_drag_x = drag_x != 0
 	if movespeed != 0:
 		## If already moving in correct direction and moving faster than movespeed, don't overwrite speed, just continue
-		if sign(character.velocity.length()) == sign(movespeed * movement_sign_offset) && abs(character.velocity.length()) > abs(movespeed * movement_sign_offset):
+		if sign(character.velocity.x) == sign(movespeed * movement_sign_offset) && abs(character.velocity.length()) > abs(movespeed * movement_sign_offset):
 			pass
 		else:
 			should_drag_x = false
@@ -310,6 +317,8 @@ func process_movement():
 	character.process_terminal_velocity(max_velocity_up, max_velocity_down, max_velocity_front, max_velocity_back)
 	character.process_movement()
 ## Helper Methods
+func get_facing_right() -> bool:
+	return character.facing_right
 func forward_input() -> bool:
 	return (input_state.left && !character.facing_right) || (input_state.right && character.facing_right)
 func backward_input() -> bool:

@@ -2,9 +2,9 @@ extends AttackState
 
 ## Startup: 10 frames
 ## Active: 7 frames
-## Recovery: 17 frames
-## BlockStun: 18
-## OnBlock: -2
+## Recovery: 16 frames
+## BlockStun: 16
+## OnBlock: -3
 ## HitStun: 26
 ## OnHit: 10
 

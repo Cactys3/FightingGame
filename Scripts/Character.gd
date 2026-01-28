@@ -1,26 +1,11 @@
 extends Node2D
 class_name Character
-## Input Constants
-const UP: String = "Up"
-const DOWN: String = "Down"
-const LEFT: String = "Left"
-const RIGHT: String = "Right"
-const A: String = "A"
-const B: String = "B"
-const C: String = "C"
-const D: String = "D"
-const START: String = "Start"
-const BACK: String = "Back"
-## Buffer Frame Counts
-const movement_buffer: int = 2
-const attack_buffer: int = 2
 @onready var anim: Sprite2D = $Sprite2D
 var current_state: CharacterState
-var input_buffer: InputBuffer = InputBuffer.new()
 var velocity: Vector2 = Vector2.ZERO
 var facing_right: bool = true
 var ground_ray: RayCast2D = RayCast2D.new()
-var p1: bool = true
+var p1: bool
 ## Basic States
 @export_group("Ground States")
 @export var stand: PackedScene
@@ -71,6 +56,10 @@ var p1: bool = true
 	#- grounded combo (crouch)
 	#- aerial combo (juggle)
 
+func process_frame():
+	if current_state:
+		current_state.process_frame()
+
 func _ready() -> void:
 	get_tree().debug_collisions_hint = true
 	add_child(ground_ray)
@@ -89,6 +78,10 @@ func change_state(new_state: CharacterState):
 	add_child(new_state)
 ## Called Once Per Frame to Set Character's Sprite, pass in a SpriteFrame's sprite (texture2d)
 func set_sprite(sprite: Texture2D):
+	if !current_state.get_facing_right():
+		anim.flip_h = true
+	else:
+		anim.flip_h = false
 	if sprite:
 		anim.texture = sprite
 ## Called Once Per Frame to Handle Movement
@@ -112,67 +105,7 @@ func set_movement(new_velocity: Vector2):
 	velocity = new_velocity
 ## Returns a setup InputState based on InputBuffer and Input.action_pressed
 func get_inputs() -> InputState:
-	## Advance Frames First (maybe should do it after adding new buffers since buffers are counted on this frame too)
-	input_buffer.advance_frame()
-	var state: InputState = InputState.new()
-	## Buffer new inputs (just pressed)
-	if Input.is_action_just_pressed(UP):
-		input_buffer.buffer(UP, movement_buffer)
-		state.up = true
-	if Input.is_action_just_pressed(DOWN):
-		input_buffer.buffer(DOWN, movement_buffer)
-		state.down = true
-	if Input.is_action_just_pressed(LEFT):
-		input_buffer.buffer(LEFT, movement_buffer)
-		state.left = true
-	if Input.is_action_just_pressed(RIGHT):
-		input_buffer.buffer(RIGHT, movement_buffer)
-		state.right = true
-	if Input.is_action_just_pressed(A):
-		input_buffer.buffer(A, attack_buffer)
-		state.A = true
-	if Input.is_action_just_pressed(B):
-		input_buffer.buffer(B, attack_buffer)
-		state.B = true
-	if Input.is_action_just_pressed(C):
-		input_buffer.buffer(C, attack_buffer)
-		state.C = true
-	if Input.is_action_just_pressed(D):
-		input_buffer.buffer(D, attack_buffer)
-		state.D = true
-	if Input.is_action_just_pressed(START):
-		pass
-	if Input.is_action_just_pressed(BACK):
-		pass
-	## Check buffer and current inputs (pressed)
-	if Input.is_action_pressed(UP) || input_buffer.is_buffered(UP):
-		state.up = true
-	if Input.is_action_pressed(DOWN) || input_buffer.is_buffered(DOWN):
-		state.down = true
-	if Input.is_action_pressed(LEFT) || input_buffer.is_buffered(LEFT):
-		state.left = true
-	if Input.is_action_pressed(RIGHT) || input_buffer.is_buffered(RIGHT):
-		state.right = true
-	if input_buffer.is_buffered(A):
-		state.A = true
-	if input_buffer.is_buffered(B):
-		state.B = true
-	if input_buffer.is_buffered(C):
-		state.C = true
-	if input_buffer.is_buffered(D):
-		state.D = true
-	if Input.is_action_pressed(START) || input_buffer.is_buffered(START):
-		state.start = true
-	if Input.is_action_pressed(BACK) || input_buffer.is_buffered(BACK):
-		state.back = true
-	## If only buffering Left but currently pressing Right, Right should win?
-	
-	## SOCD - Neutral Up Wins
-	if state.up && state.down:
-		state.down = false
-	if state.left && state.right:
-		state.left = false
-		state.right = false
+	var state: InputState = GameManager.instance.get_inputs(p1)
 	return state
 func get_grounded() -> bool:
 	if ground_ray.is_colliding():
@@ -189,7 +122,6 @@ class InputState:
 	var A: bool = false
 	var B: bool = false
 	var C: bool = false
-	var D: bool = false
 	## Menus
 	var start: bool = false
 	var back: bool = false
@@ -208,30 +140,3 @@ class InputState:
 	var dpb: bool = false
 	## 360 Input
 	var fullcircle: bool = false
-## Used to store inputs for a certian number of frames
-class InputBuffer:
-	var array: Array[InputElement]
-	## Advances all Buffered inputs to the next frame
-	func advance_frame():
-		for input: InputElement in array:
-			input.reduce_buffer_or_delete(array)
-	## Adds an input buffer for the next buffer_frames frames
-	func buffer(new_name, buffer_frames):
-		array.append(InputElement.new(new_name, buffer_frames))
-	## Checks if an input has been buffered (as active)
-	func is_buffered(input_name) -> bool:
-		for element in array:
-			if element.input_name == input_name:
-				return true
-		return false
-	class InputElement:
-		func _init(new_name, buffer_frames):
-			input_name = new_name
-			buffer_frames_left = buffer_frames
-		var input_name: String
-		var buffer_frames_left: int = 10
-		func reduce_buffer_or_delete(buffer: Array):
-			buffer_frames_left -= 1
-			if buffer_frames_left <= 0 && buffer.has(self):
-				buffer.erase(self)
-				## TODO: does this need to free? or does reference counting handle this?

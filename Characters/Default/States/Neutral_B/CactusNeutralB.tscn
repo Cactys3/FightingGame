@@ -36,25 +36,25 @@ region = Rect2(1752, 0, 292, 152)
 [sub_resource type="SpriteFrames" id="SpriteFrames_inpbn"]
 animations = [{
 "frames": [{
-"duration": 1.0,
+"duration": 3.0,
 "texture": SubResource("AtlasTexture_mhldv")
 }, {
-"duration": 1.0,
+"duration": 3.0,
 "texture": SubResource("AtlasTexture_6psx5")
 }, {
-"duration": 1.0,
+"duration": 4.0,
 "texture": SubResource("AtlasTexture_a8jbe")
 }, {
-"duration": 1.0,
+"duration": 4.0,
 "texture": SubResource("AtlasTexture_dfpt5")
 }, {
-"duration": 1.0,
+"duration": 6.0,
 "texture": SubResource("AtlasTexture_q0wha")
 }, {
-"duration": 1.0,
+"duration": 6.0,
 "texture": SubResource("AtlasTexture_fcs5y")
 }, {
-"duration": 1.0,
+"duration": 7.0,
 "texture": SubResource("AtlasTexture_e46pv")
 }],
 "loop": true,
@@ -62,7 +62,6 @@ animations = [{
 "speed": 5.0
 }]
 script = ExtResource("3_ejmfv")
-stall = 1
 metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6psx5"]
@@ -77,13 +76,13 @@ size = Vector2(104, 73)
 [node name="CactusNeutralB" type="Node2D" node_paths=PackedStringArray("hitbox_parent", "hurtbox_parent")]
 script = ExtResource("1_ejmfv")
 startup_frames = 10
-active_frames = 9
-recovery_frames = 17
-block_stun = 18
+active_frames = 7
+recovery_frames = 16
+block_stun = 16
 hit_stun = 26
+animation = SubResource("SpriteFrames_inpbn")
 hitbox_parent = NodePath("Hitbox_Parent")
 hurtbox_parent = NodePath("Hurtbox_Parent")
-animation = SubResource("SpriteFrames_inpbn")
 
 [node name="Hitbox_Parent" type="Area2D" parent="."]
 
@@ -93,7 +92,6 @@ shape = SubResource("RectangleShape2D_6psx5")
 debug_color = Color(0.9607843, 0, 0.5176471, 0.14509805)
 script = ExtResource("4_ejmfv")
 is_hitbox = true
-print_debug = true
 active_frames = Array[int]([11, 12, 13, 14, 15, 16, 17])
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"
 

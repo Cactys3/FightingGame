@@ -54,26 +54,24 @@ block_stun = 10
 hit_stun = 12
 fiveA_transitionable = true
 fiveB_transitionable = true
-fiveC_transitionable = true
 hitbox_parent = NodePath("Hitbox_Parent")
 hurtbox_parent = NodePath("Hurtbox_Parent")
 normal_transitionable = true
 special_transitionable = true
 super_transitionable = true
 ultimate_transitionable = true
-stop_momentum = true
+drag_x = 0.3
 animation = SubResource("SpriteFrames_q2veu")
 
 [node name="Hitbox_Parent" type="Area2D" parent="."]
 
 [node name="CollisionBox" type="CollisionShape2D" parent="Hitbox_Parent"]
-visible = false
 position = Vector2(54, -2)
 shape = SubResource("RectangleShape2D_2v3ir")
 debug_color = Color(0.9607843, 0, 0.5176471, 0.14509805)
 script = ExtResource("4_33gwa")
 is_hitbox = true
-active_frames = Array[int]([7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18])
+active_frames = Array[int]([5, 6, 7, 8])
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"
 
 [node name="Hurtbox_Parent" type="Area2D" parent="."]
@@ -86,11 +84,10 @@ always_active = true
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"
 
 [node name="CollisionBox2" type="CollisionShape2D" parent="Hurtbox_Parent"]
-visible = false
 position = Vector2(45, -2.5)
 shape = SubResource("RectangleShape2D_okprf")
 script = ExtResource("4_33gwa")
-inactive_frames = Array[int]([1, 2, 3, 4, 5, 6])
+inactive_frames = Array[int]([1, 2, 3, 4, 5, 6, 7, 0])
 always_active = true
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"
 
