@@ -78,10 +78,10 @@ func change_state(new_state: CharacterState):
 	add_child(new_state)
 ## Called Once Per Frame to Set Character's Sprite, pass in a SpriteFrame's sprite (texture2d)
 func set_sprite(sprite: Texture2D):
-	if !current_state.get_facing_right():
-		anim.flip_h = true
+	if current_state.get_facing_right():
+		scale.x = 1
 	else:
-		anim.flip_h = false
+		scale.x = -1
 	if sprite:
 		anim.texture = sprite
 ## Called Once Per Frame to Handle Movement

@@ -61,6 +61,7 @@ special_transitionable = true
 super_transitionable = true
 ultimate_transitionable = true
 drag_x = 0.3
+gravity = 0.7
 animation = SubResource("SpriteFrames_q2veu")
 
 [node name="Hitbox_Parent" type="Area2D" parent="."]

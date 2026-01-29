@@ -38,6 +38,7 @@ script = ExtResource("1_prbwk")
 hurtbox_parent = NodePath("Hurtbox_Parent")
 can_block = true
 stand_transitionable = true
+normal_transitionable = true
 air_dash_transitionable = true
 air_normal_transitionable = true
 air_grab_transitionable = true

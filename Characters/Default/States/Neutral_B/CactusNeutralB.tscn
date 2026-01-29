@@ -65,13 +65,13 @@ script = ExtResource("3_ejmfv")
 metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6psx5"]
-size = Vector2(97, 60)
+size = Vector2(104, 60)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mhldv"]
 size = Vector2(102, 126)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ejmfv"]
-size = Vector2(104, 73)
+size = Vector2(111, 73)
 
 [node name="CactusNeutralB" type="Node2D" node_paths=PackedStringArray("hitbox_parent", "hurtbox_parent")]
 script = ExtResource("1_ejmfv")
@@ -80,14 +80,15 @@ active_frames = 7
 recovery_frames = 16
 block_stun = 16
 hit_stun = 26
-animation = SubResource("SpriteFrames_inpbn")
 hitbox_parent = NodePath("Hitbox_Parent")
 hurtbox_parent = NodePath("Hurtbox_Parent")
+gravity = 0.7
+animation = SubResource("SpriteFrames_inpbn")
 
 [node name="Hitbox_Parent" type="Area2D" parent="."]
 
 [node name="CollisionBox" type="CollisionShape2D" parent="Hitbox_Parent"]
-position = Vector2(41.5, -16)
+position = Vector2(45, -16)
 shape = SubResource("RectangleShape2D_6psx5")
 debug_color = Color(0.9607843, 0, 0.5176471, 0.14509805)
 script = ExtResource("4_ejmfv")
@@ -105,7 +106,7 @@ always_active = true
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"
 
 [node name="CollisionBox" type="CollisionShape2D" parent="Hurtbox_Parent"]
-position = Vector2(42, -15.5)
+position = Vector2(45.5, -15.5)
 shape = SubResource("RectangleShape2D_ejmfv")
 script = ExtResource("4_ejmfv")
 active_frames = Array[int]([17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34])
