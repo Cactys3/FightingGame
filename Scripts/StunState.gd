@@ -13,15 +13,11 @@ func _init():
 
 func enable_state(chara: Character, args: Array):
 	super(chara, args)
-	print("is args?")
 	if args[0] is CollisionQueueElement:
-		print("it is")
 		var attack: CollisionQueueElement = args[0]
 		if is_blockstun():
-			print("1")
 			stun_frames = attack.blockstun
 		elif is_hitstun():
-			print("2")
 			stun_frames = attack.hitstun
 
 func is_blockstun() -> bool:
