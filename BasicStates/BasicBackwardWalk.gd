@@ -2,8 +2,8 @@ extends CharacterState
 
 var initial_facing_right: bool
 
-func enable_state(chara: Character):
-	super(chara)
+func enable_state(chara: Character, args: Array):
+	super(chara, args)
 	initial_facing_right = chara.facing_right
 
 func _init():

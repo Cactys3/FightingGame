@@ -4,8 +4,8 @@ func _init():
 	state_name = "Crouch"
 	state_switching_priority = StateSwitchingPriorities.crouch
 	super()
-func enable_state(chara: Character):
-	super(chara)
+func enable_state(chara: Character, args: Array):
+	super(chara, args)
 
 
 func check_crouch():

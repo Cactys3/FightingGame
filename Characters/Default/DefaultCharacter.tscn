@@ -9,6 +9,10 @@
 [ext_resource type="PackedScene" uid="uid://lqnik2qfs4h0" path="res://Characters/Default/States/Jump/jump.tscn" id="5_sikfd"]
 [ext_resource type="PackedScene" uid="uid://bcgpuh6qp3uto" path="res://Characters/Default/States/Neutral_A/CactusNeutralA.tscn" id="8_3i6xb"]
 [ext_resource type="PackedScene" uid="uid://cj0tufaya08n4" path="res://Characters/Default/States/Neutral_B/CactusNeutralB.tscn" id="9_mo6d2"]
+[ext_resource type="PackedScene" uid="uid://cdltcbyjwln3n" path="res://Characters/Default/States/BlockStunStand/BlockStunStand.tscn" id="10_x5bwh"]
+[ext_resource type="PackedScene" uid="uid://g40f5os331u0" path="res://Characters/Default/States/HitStunStand/HitStunStand.tscn" id="11_wuvth"]
+[ext_resource type="PackedScene" uid="uid://mlaqqdfmqdit" path="res://Characters/Default/States/BlockStunCrouch/BlockStunCrouch.tscn" id="12_86pj4"]
+[ext_resource type="PackedScene" uid="uid://jqmjqg63dk7t" path="res://Characters/Default/States/HitStunCrouch/HitStunCrouch.tscn" id="13_vu4fu"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kclne"]
 radius = 61.008198
@@ -23,6 +27,10 @@ jump = ExtResource("5_sikfd")
 fall = ExtResource("5_kclne")
 five_A = ExtResource("8_3i6xb")
 five_B = ExtResource("9_mo6d2")
+stand_blockstun = ExtResource("10_x5bwh")
+stand_hitsun = ExtResource("11_wuvth")
+crouch_blockstun = ExtResource("12_86pj4")
+crouch_hitsun = ExtResource("13_vu4fu")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1035193219]
 texture_filter = 2

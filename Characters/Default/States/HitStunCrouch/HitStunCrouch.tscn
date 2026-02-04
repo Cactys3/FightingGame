@@ -1,8 +1,20 @@
 [gd_scene format=3 uid="uid://jqmjqg63dk7t"]
 
 [ext_resource type="Script" uid="uid://dxujdli4sq6rk" path="res://Scripts/CollisionBox.gd" id="1_7phh1"]
+[ext_resource type="Script" uid="uid://dc3xj2erai6hn" path="res://Characters/Default/States/HitStunCrouch/HitStunCrouch.gd" id="1_tyxux"]
+[ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="2_03twe"]
 
-[node name="HitStunCrouch" type="Node2D" unique_id=1567304229]
+[sub_resource type="SpriteFrames" id="SpriteFrames_t2s1g"]
+script = ExtResource("2_03twe")
+metadata/_custom_type_script = "uid://mka3ildkshw6"
+
+[node name="HitStunCrouch" type="Node2D" unique_id=1567304229 node_paths=PackedStringArray("hurtbox_parent")]
+script = ExtResource("1_tyxux")
+hurtbox_parent = NodePath("Hurtbox_Parent")
+throwable = false
+crouching = true
+loop = true
+animation = SubResource("SpriteFrames_t2s1g")
 
 [node name="Hurtbox_Parent" type="Area2D" parent="." unique_id=603978626]
 

@@ -1,8 +1,18 @@
 [gd_scene format=3 uid="uid://g40f5os331u0"]
 
 [ext_resource type="Script" uid="uid://dxujdli4sq6rk" path="res://Scripts/CollisionBox.gd" id="1_34h0q"]
+[ext_resource type="Script" uid="uid://cdwfa6801sqs2" path="res://Characters/Default/States/HitStunStand/HitStunStand.gd" id="1_yjm73"]
+[ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="2_r76sn"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1yvvj"]
+script = ExtResource("2_r76sn")
+metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [node name="HitStunStand" type="Node2D" unique_id=1567304229]
+script = ExtResource("1_yjm73")
+throwable = false
+loop = true
+animation = SubResource("SpriteFrames_1yvvj")
 
 [node name="Hurtbox_Parent" type="Area2D" parent="." unique_id=603978626]
 

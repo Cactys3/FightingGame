@@ -29,8 +29,8 @@ var jump_type = jump_types.unset
 var startup_complete: bool = false
 var applied_impulse: bool = false
 var landing_lag_frames_left: int = -1
-func enable_state(chara: Character):
-	super(chara)
+func enable_state(chara: Character, args: Array):
+	super(chara, args)
 	character.set_movement(Vector2(character.velocity.x, 0))
 	## Check Direction on enable
 	_check_jump_direction()

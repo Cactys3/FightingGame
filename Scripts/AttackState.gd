@@ -2,7 +2,6 @@ extends CharacterState
 class_name AttackState
 func _init():
 	super()
-	normal_priority = NormalPriorities.FiveA
 enum AirNormalPriorities {unset, A, B}
 enum NormalPriorities {unset, FiveA, FiveB, SixA, SixB, FourA, FourB, TwoA, TwoB, ThreeA, ThreeB, OneA, OneB}
 var normal_priority: NormalPriorities = NormalPriorities.unset
@@ -67,8 +66,8 @@ func advance_frame():
 func process_unique():
 	if frame >= startup_frames + active_frames + recovery_frames:#if animation.is_at_end(frame):
 		state_queue.force_add(character.stand.instantiate(), stand_buffer, [])
-func enable_state(chara: Character):
-	super(chara)
+func enable_state(chara: Character, args: Array):
+	super(chara, args)
 ## Getting hit, handle punish/counter
 ## Handle Normal Priorities and cancels
 func transition_to_stand(state: CharacterState, force: bool, args: Array) -> bool:
@@ -124,4 +123,4 @@ func can_cancel_into_normal(state: CharacterState) -> bool:
 
 
 func get_collision_element() -> CollisionQueueElement:
-	return CollisionQueueElement.new(combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun, hitstun)
+	return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun, hitstun)

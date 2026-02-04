@@ -97,7 +97,7 @@ func change_state(new_state: CharacterState, args: Array):
 		remove_child(current_state)
 		current_state.queue_free()
 	current_state = new_state
-	new_state.enable_state(self)
+	new_state.enable_state(self, args)
 	add_child(new_state)
 ## Called Once Per Frame to Set Character's Sprite, pass in a SpriteFrame's sprite (texture2d)
 func set_sprite(sprite: Texture2D):

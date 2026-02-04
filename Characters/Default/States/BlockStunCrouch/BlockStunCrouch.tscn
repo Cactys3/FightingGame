@@ -1,8 +1,21 @@
 [gd_scene format=3 uid="uid://mlaqqdfmqdit"]
 
+[ext_resource type="Script" uid="uid://mjkdlyw0dvd3" path="res://Characters/Default/States/BlockStunCrouch/BlockStunCrouch.gd" id="1_sc6db"]
 [ext_resource type="Script" uid="uid://dxujdli4sq6rk" path="res://Scripts/CollisionBox.gd" id="1_yljvy"]
+[ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="2_5jg7o"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_dn6jg"]
+script = ExtResource("2_5jg7o")
+metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [node name="BlockStunCrouch" type="Node2D" unique_id=1567304229]
+script = ExtResource("1_sc6db")
+can_block = true
+throwable = false
+crouching = true
+drag_x = 0.01
+loop = true
+animation = SubResource("SpriteFrames_dn6jg")
 
 [node name="Hurtbox_Parent" type="Area2D" parent="." unique_id=603978626]
 

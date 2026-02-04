@@ -9,7 +9,7 @@ var input_state: Character.InputState = null
 var collision_queue: Array[CollisionQueueElement] = []
 @export_category("Generic Properties")
 var state_name: String = "unset"
-var state_switching_priority: StateSwitchingPriorities = StateSwitchingPriorities.unset	
+var state_switching_priority: StateSwitchingPriorities = StateSwitchingPriorities.unset
 enum StateSwitchingPriorities {unset, crouch, stand, movement, jump, dash, normal, grab, special, parry, _super, ultimate, falling, air_dash, air_normal, air_grab, air_special, air_super, air_ultimate, getting_hit}
 @export var hitbox_parent: Area2D
 @export var hurtbox_parent: Area2D
@@ -90,7 +90,7 @@ const getting_hit_buffer: int = 0
 func _init():
 	pass
 ## Sets this state up as the currently active state for the given character
-func enable_state(chara: Character):
+func enable_state(chara: Character, args: Array):
 	character = chara
 	frame = 0
 	enabled = true
@@ -196,7 +196,7 @@ func process_collisions():
 			if is_crouching():
 				state_queue.force_add(character.crouch_blockstun.instantiate(), 0, [element])
 			else:
-				state_queue.force_add(character.crouch_hitstun.instantiate(), 0, [element])
+				state_queue.force_add(character.stand_blockstun.instantiate(), 0, [element])
 		else:
 			if is_crouching():
 				state_queue.force_add(character.crouch_hitsun.instantiate(), 0, [element])
@@ -346,9 +346,9 @@ func is_backward_input() -> bool:
 func is_blocking() -> bool:
 	return (input_state.left && character.facing_right) || (input_state.right && !character.facing_right)  
 func is_crouching() -> bool:
-	return input_state.down || state_switching_priority == StateSwitchingPriorities.crouch ## or crouch hit/block stun
+	return input_state.down
 func is_standing() -> bool:
-	return (!input_state.down && !input_state.up) || state_switching_priority == StateSwitchingPriorities.stand ## or stand hit/block stun
+	return (!input_state.down && !input_state.up)
 ## Returns if the given CollisionBox comes from this Character or another one
 func is_our_box(box: CollisionBox) -> bool:
 	return (box.p1 == character.p1) && (box.state == self)
@@ -420,7 +420,8 @@ class StateQueue:
 			if frames_left <= 0 && queue.has(self):
 				queue.erase(self)
 class CollisionQueueElement:
-	func _init(new_combo_scaling: float, new_damage_onhit: float, new_damage_onblock: float, new_pushback_onhit: float, new_pushback_onblock: float, new_launch_onhit: bool, new_launch_height: float, new_juggle_height: float, new_overhead: bool, new_low: bool, new_jump_in: bool, new_blockstun: int, new_hitstun: int):
+	func _init(new_attack_state: AttackState, new_combo_scaling: float, new_damage_onhit: float, new_damage_onblock: float, new_pushback_onhit: float, new_pushback_onblock: float, new_launch_onhit: bool, new_launch_height: float, new_juggle_height: float, new_overhead: bool, new_low: bool, new_jump_in: bool, new_blockstun: int, new_hitstun: int):
+		attack_state = new_attack_state
 		combo_scaling = new_combo_scaling
 		damage_onhit = new_damage_onhit
 		damage_onblock = new_damage_onblock
@@ -434,6 +435,7 @@ class CollisionQueueElement:
 		jump_in = new_jump_in
 		blockstun = new_blockstun
 		hitstun = new_hitstun
+	var attack_state: AttackState
 	var combo_scaling: float
 	var damage_onhit: float
 	var damage_onblock: float
