@@ -1,0 +1,2 @@
+extends CharacterState
+class_name StunState

@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://mlaqqdfmqdit"]
+
+[ext_resource type="Script" uid="uid://dxujdli4sq6rk" path="res://Scripts/CollisionBox.gd" id="1_yljvy"]
+
+[node name="BlockStunCrouch" type="Node2D" unique_id=1567304229]
+
+[node name="Hurtbox_Parent" type="Area2D" parent="." unique_id=603978626]
+
+[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent" unique_id=1697103668]
+script = ExtResource("1_yljvy")
+metadata/_custom_type_script = "uid://dxujdli4sq6rk"

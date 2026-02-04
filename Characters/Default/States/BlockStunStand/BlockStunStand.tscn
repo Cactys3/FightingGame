@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://cdltcbyjwln3n"]
+
+[ext_resource type="Script" uid="uid://dxujdli4sq6rk" path="res://Scripts/CollisionBox.gd" id="1_7odk3"]
+[ext_resource type="Script" uid="uid://d4jmel4e6vst0" path="res://Characters/Default/States/BlockStunStand/BlockStunStand.gd" id="1_vfloi"]
+
+[node name="BlockStunStand" type="Node2D" unique_id=1567304229]
+script = ExtResource("1_vfloi")
+
+[node name="Hurtbox_Parent" type="Area2D" parent="." unique_id=603978626]
+
+[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent" unique_id=1697103668]
+script = ExtResource("1_7odk3")
+metadata/_custom_type_script = "uid://dxujdli4sq6rk"
