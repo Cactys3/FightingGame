@@ -4,8 +4,6 @@ enum StunPriorities {unset, crouch_blockstun, stand_blockstun, crouch_hitstun, s
 var stun_priority: StunPriorities = StunPriorities.unset
 var stun_frames: int 
 
-
-
 func _init():
 	state_name = "Stun"
 	super()

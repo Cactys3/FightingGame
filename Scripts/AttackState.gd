@@ -15,9 +15,11 @@ var normal_priority: NormalPriorities = NormalPriorities.unset
 ## X-Direction pushback
 @export var pushback_onblock: float = 0
 ## Does this keep them grounded onhit or launch
-@export var launch_onhit: bool = 0
+@export var launch_onhit: bool
 ## The Y Value applied to enemy when they are grounded
 @export var launch_height: float = 0
+@export var launch_onhit_counter_hit: bool
+@export var launch_height_counter_hit: float = 0
 ## The Y Value applied to enemy when they are airborne or already being juggled
 @export var juggle_height: float = 0
 ## Can't be blocked crouching
@@ -28,6 +30,8 @@ var normal_priority: NormalPriorities = NormalPriorities.unset
 @export var jump_in: bool = false
 @export var blockstun: int = 0
 @export var hitstun: int = 0
+@export var hitstun_counter_hit: int = 0
+@export var hitstun_punish_hit: int = 0
 ## Frames
 @export var startup_frames: int = 0
 @export var active_frames: int = 0
@@ -124,3 +128,7 @@ func can_cancel_into_normal(state: CharacterState) -> bool:
 
 func get_collision_element() -> CollisionQueueElement:
 	return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun, hitstun)
+func get_collision_element_counter_hit() -> CollisionQueueElement:
+	return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit_counter_hit, launch_height_counter_hit, juggle_height, overhead, low, jump_in, blockstun, hitstun_counter_hit)
+func get_collision_element_punish_hit() -> CollisionQueueElement:
+	return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun, hitstun_punish_hit)

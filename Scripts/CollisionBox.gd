@@ -14,6 +14,8 @@ class_name CollisionBox
 const hitbox_debug_color: Color = Color(255, 0, 0, 0.1)
 const hurtbox_debug_color: Color = Color(0, 0, 255, 0.1)
 var active: bool = false
+## things hit since last disable()
+var hit_already: bool = false
 ## Return if this CollisionBox can attack other
 func can_attack(other: CollisionBox):
 	pass
@@ -21,6 +23,7 @@ func can_attack(other: CollisionBox):
 func can_be_hit(other: CollisionBox):
 	pass
 func disable(frame: int):
+	hit_already = false
 	active = false
 	display_debug = false
 	visible = false

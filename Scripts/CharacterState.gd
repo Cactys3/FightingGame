@@ -185,9 +185,9 @@ func process_collisions():
 	if hurtbox_parent:
 		for area in hurtbox_parent.get_overlapping_areas():
 			for box in area.get_children():
-				if box is CollisionBox && box.active && box.is_hitbox && !is_our_box(box):
-					## Queue Collision
-					print("Queue Collision: " + str(frame))
+				if box is CollisionBox && box.active && box.is_hitbox && !is_our_box(box) && !box.hit_already:
+					box = box as CollisionBox
+					box.hit_already = true
 					var state: AttackState = box.state
 					collision_queue.append(state.get_collision_element())
 	## Handle Collected Collision
