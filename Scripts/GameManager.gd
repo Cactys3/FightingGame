@@ -25,12 +25,10 @@ const P2_B: String = "P2_B"
 const P2_C: String = "P2_C"
 const P2_START: String = "P2_Start"
 const P2_BACK: String = "P2_Back"
-
 var p1_input_buffer: InputBuffer = InputBuffer.new()
 var p2_input_buffer: InputBuffer = InputBuffer.new()
 @export var P1: Character
 @export var P2: Character
-
 @export var InputHistory_P1: InputHistory
 @export var InputHistory_P2: InputHistory
 func _ready() -> void:
@@ -39,12 +37,33 @@ func _ready() -> void:
 		get_tree().quit()
 	instance = self
 	instance_ready = true
-
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	setup_characters()
-	P1.process_frame()
-	P2.process_frame()
-
+	var players: Array[Character] = [P1, P2]
+	## Handle Multithread/concurrence
+	## Start P1, wait for it to be done with 1st step, start P2, wait for it to be done with first step, continue for each step
+	#P1.process_frame()
+	#P2.process_frame()
+	for player in players:
+		await player.process_advance_frame()
+	for player in players:
+		await player.process_advance_animation()
+	for player in players:
+		await player.process_setup_collision()
+	for player in players:
+		await player.process_process_variables()
+	for player in players:
+		await player.process_grab_inputs()
+	for player in players:
+		await player.process_process_inputs()
+	for player in players:
+		await player.process_process_collisions()
+	for player in players:
+		await player.process_process_movement()
+	for player in players:
+		await player.process_process_unique()
+	for player in players:
+		await player.process_check_state_queue()
 ## Sets character up for process
 func setup_characters():
 	# set p1/p2
@@ -65,7 +84,6 @@ func get_inputs(p1: bool) -> Character.InputState:
 	else:
 		setup_state_and_buffer(state, p2_input_buffer, P2_UP, P2_DOWN, P2_LEFT, P2_RIGHT, P2_A, P2_B, P2_C, P2_START, P2_BACK)
 	return state
-
 func setup_state_and_buffer(state: Character.InputState, buffer: InputBuffer, UP, DOWN, LEFT, RIGHT, A, B, C, START, BACK):
 	## Inputs
 	if Input.is_action_just_pressed(UP):
@@ -127,7 +145,6 @@ func setup_state_and_buffer(state: Character.InputState, buffer: InputBuffer, UP
 				state.right = false
 			else:
 				state.left = false
-
 ## UI
 func change_input_history(p1: bool, state: String, time: String, index: int):
 	var text: String = state + " - " + time
@@ -145,9 +162,6 @@ func add_input_history(p1: bool, state: String, time: String):
 	else:
 		if InputHistory_P2:
 			InputHistory_P2.add(text)
-
-
-
 ## Used to store inputs for a certian number of frames
 class InputBuffer:
 	var array: Array[InputElement]
@@ -175,3 +189,6 @@ class InputBuffer:
 			if buffer_frames_left <= 0 && buffer.has(self):
 				buffer.erase(self)
 				## TODO: does this need to free? or does reference counting handle this?
+class CollisionEvent:
+	var attacker: Character
+	var reciever: Character

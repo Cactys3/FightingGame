@@ -56,9 +56,31 @@ var p1: bool
 	#- grounded combo (crouch)
 	#- aerial combo (juggle)
 
-func process_frame():
-	if current_state:
-		current_state.process_frame()
+#func process_frame():
+	#if current_state:
+		#current_state.process_frame()
+
+## Individual Calls to process state
+func process_advance_frame():
+	await current_state.advance_frame()
+func process_advance_animation():
+	await current_state.advance_animation()
+func process_setup_collision():
+	await current_state.setup_collision()
+func process_process_variables():
+	await current_state.process_variables()
+func process_grab_inputs():
+	await current_state.grab_inputs()
+func process_process_inputs():
+	await current_state.process_inputs()
+func process_process_collisions():
+	await current_state.process_collisions()
+func process_process_movement():
+	await current_state.process_movement()
+func process_process_unique():
+	await current_state.process_unique()
+func process_check_state_queue():
+	await current_state.check_state_queue()
 
 func _ready() -> void:
 	get_tree().debug_collisions_hint = true
@@ -67,18 +89,19 @@ func _ready() -> void:
 	ground_ray.target_position = ground_ray.position + Vector2(0, 70)
 	ground_ray.collide_with_areas = true
 	ground_ray.collide_with_bodies = true
-	change_state(stand.instantiate())
+	change_state(stand.instantiate(), [])
 ## Called when a state change is decided upon
-func change_state(new_state: CharacterState):
+func change_state(new_state: CharacterState, args: Array):
 	if current_state:
 		current_state.disable_state()
 		remove_child(current_state)
+		current_state.queue_free()
 	current_state = new_state
 	new_state.enable_state(self)
 	add_child(new_state)
 ## Called Once Per Frame to Set Character's Sprite, pass in a SpriteFrame's sprite (texture2d)
 func set_sprite(sprite: Texture2D):
-	if current_state.get_facing_right():
+	if current_state.is_facing_right():
 		scale.x = 1
 	else:
 		scale.x = -1

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bfn43q8n417k7"]
+[gd_scene format=3 uid="uid://bfn43q8n417k7"]
 
 [ext_resource type="Script" uid="uid://dlkc5nynftvu4" path="res://BasicStates/BasicForwardWalk.gd" id="1_xk2i1"]
 [ext_resource type="Texture2D" uid="uid://d0rp0pepiwkkb" path="res://Characters/Default/States/ForwardWalk/Character_Forward_Walk.png" id="2_mg0p4"]
@@ -75,7 +75,7 @@ metadata/_custom_type_script = "uid://mka3ildkshw6"
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rwio0"]
 size = Vector2(102, 126)
 
-[node name="ForwardWalk" type="Node2D" node_paths=PackedStringArray("hurtbox_parent")]
+[node name="ForwardWalk" type="Node2D" unique_id=628377244 node_paths=PackedStringArray("hurtbox_parent")]
 script = ExtResource("1_xk2i1")
 hurtbox_parent = NodePath("Hurtbox_Parent")
 can_block = true
@@ -94,11 +94,12 @@ movespeed = 3.0
 loop = true
 animation = SubResource("SpriteFrames_v3m5v")
 
-[node name="Hurtbox_Parent" type="Area2D" parent="."]
+[node name="Hurtbox_Parent" type="Area2D" parent="." unique_id=1038863958]
 
-[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent"]
+[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent" unique_id=385853211 node_paths=PackedStringArray("state")]
 position = Vector2(6, 7)
 shape = SubResource("RectangleShape2D_rwio0")
 script = ExtResource("4_26k7w")
+state = NodePath("../..")
 always_active = true
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"

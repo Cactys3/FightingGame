@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://cj0tufaya08n4"]
+[gd_scene format=3 uid="uid://cj0tufaya08n4"]
 
 [ext_resource type="Script" uid="uid://k721nek5ievu" path="res://Characters/Default/States/Neutral_B/CactusNeutralB.gd" id="1_ejmfv"]
 [ext_resource type="Texture2D" uid="uid://bh3b5tpj07u78" path="res://Characters/Default/States/Neutral_B/Neutral_B.png" id="2_he2x5"]
@@ -73,7 +73,7 @@ size = Vector2(102, 126)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ejmfv"]
 size = Vector2(111, 73)
 
-[node name="CactusNeutralB" type="Node2D" node_paths=PackedStringArray("hitbox_parent", "hurtbox_parent")]
+[node name="CactusNeutralB" type="Node2D" unique_id=1944909 node_paths=PackedStringArray("hitbox_parent", "hurtbox_parent")]
 script = ExtResource("1_ejmfv")
 startup_frames = 10
 active_frames = 7
@@ -85,34 +85,37 @@ hurtbox_parent = NodePath("Hurtbox_Parent")
 gravity = 0.7
 animation = SubResource("SpriteFrames_inpbn")
 
-[node name="Hitbox_Parent" type="Area2D" parent="."]
+[node name="Hitbox_Parent" type="Area2D" parent="." unique_id=1103010906]
 
-[node name="CollisionBox" type="CollisionShape2D" parent="Hitbox_Parent"]
+[node name="CollisionBox" type="CollisionShape2D" parent="Hitbox_Parent" unique_id=1317395316 node_paths=PackedStringArray("state")]
 position = Vector2(45, -16)
 shape = SubResource("RectangleShape2D_6psx5")
 debug_color = Color(0.9607843, 0, 0.5176471, 0.14509805)
 script = ExtResource("4_ejmfv")
+state = NodePath("../..")
 is_hitbox = true
 active_frames = Array[int]([11, 12, 13, 14, 15, 16, 17])
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"
 
-[node name="Hurtbox_Parent" type="Area2D" parent="."]
+[node name="Hurtbox_Parent" type="Area2D" parent="." unique_id=1504723629]
 
-[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent"]
+[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent" unique_id=1082708174 node_paths=PackedStringArray("state")]
 position = Vector2(6, 7)
 shape = SubResource("RectangleShape2D_mhldv")
 script = ExtResource("4_ejmfv")
+state = NodePath("../..")
 always_active = true
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"
 
-[node name="CollisionBox" type="CollisionShape2D" parent="Hurtbox_Parent"]
+[node name="CollisionBox" type="CollisionShape2D" parent="Hurtbox_Parent" unique_id=1171975081 node_paths=PackedStringArray("state")]
 position = Vector2(45.5, -15.5)
 shape = SubResource("RectangleShape2D_ejmfv")
 script = ExtResource("4_ejmfv")
+state = NodePath("../..")
 active_frames = Array[int]([17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34])
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=401462795]
 visible = false
 sprite_frames = SubResource("SpriteFrames_inpbn")
 frame = 3

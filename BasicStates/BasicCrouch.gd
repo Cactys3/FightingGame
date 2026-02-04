@@ -10,4 +10,4 @@ func enable_state(chara: Character):
 
 func check_crouch():
 	if !input_state.down:
-		state_queue.add(character.stand.instantiate(), stand_buffer)
+		state_queue.add(character.stand.instantiate(), stand_buffer, [])

@@ -49,7 +49,7 @@ func check_fall():
 		## Force Add
 		var fall = character.fall.instantiate()
 		fall.add_landing_frames(jump_landing_lag_frames)
-		state_queue.force_add(fall, falling_buffer)
+		state_queue.force_add(fall, falling_buffer, [])
 func check_jump():
 	pass
 
@@ -73,8 +73,6 @@ func process_movement():
 		character.add_movement(new_velocity)
 	character.process_movement()
 
-func transition_to_state(state: CharacterState, force_unless_hit: bool) -> bool:
-	return super(state, force_unless_hit)
 
 ## Jump Specific
 func _check_jump_direction():

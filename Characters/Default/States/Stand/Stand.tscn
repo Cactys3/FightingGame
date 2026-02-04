@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://ct5gccd03pmlu"]
+[gd_scene format=3 uid="uid://ct5gccd03pmlu"]
 
 [ext_resource type="Script" uid="uid://dwtaaqwj3tyue" path="res://BasicStates/BasicStand.gd" id="1_dwhvn"]
 [ext_resource type="Texture2D" uid="uid://douiq1xlquod" path="res://Characters/Default/States/Stand/Character_Stand.png" id="2_vccfv"]
@@ -47,9 +47,8 @@ metadata/_custom_type_script = "uid://mka3ildkshw6"
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_56ioh"]
 size = Vector2(102, 126)
 
-[node name="Stand" type="Node2D" node_paths=PackedStringArray("hitbox_parent", "hurtbox_parent")]
+[node name="Stand" type="Node2D" unique_id=1567304229 node_paths=PackedStringArray("hurtbox_parent")]
 script = ExtResource("1_dwhvn")
-hitbox_parent = NodePath("")
 hurtbox_parent = NodePath("Hurtbox_Parent")
 can_block = true
 crouch_transitionable = true
@@ -66,11 +65,12 @@ falling_transitionable = true
 loop = true
 animation = SubResource("SpriteFrames_yckpi")
 
-[node name="Hurtbox_Parent" type="Area2D" parent="."]
+[node name="Hurtbox_Parent" type="Area2D" parent="." unique_id=603978626]
 
-[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent"]
+[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent" unique_id=1697103668 node_paths=PackedStringArray("state")]
 position = Vector2(6, 7)
 shape = SubResource("RectangleShape2D_56ioh")
 script = ExtResource("4_56ioh")
+state = NodePath("../..")
 always_active = true
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"

@@ -15,7 +15,7 @@ func check_forward_walk():
 	if (input_state.right && initial_facing_right) || (input_state.left && !initial_facing_right): #if (input_state.right && character.facing_right) || (input_state.left && !character.facing_right):
 		pass
 	else:
-		character.change_state(character.stand.instantiate())
+		state_queue.force_add(character.stand.instantiate(), 0, [])
 
-func get_facing_right() -> bool:
+func is_facing_right() -> bool:
 	return initial_facing_right

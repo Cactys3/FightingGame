@@ -6,9 +6,10 @@ var frame: int = 0
 var enabled: bool = false
 var state_queue: StateQueue = StateQueue.new()
 var input_state: Character.InputState = null
+var collision_queue: Array[CollisionQueueElement] = []
 @export_category("Generic Properties")
 var state_name: String = "unset"
-var state_switching_priority: StateSwitchingPriorities = StateSwitchingPriorities.unset
+var state_switching_priority: StateSwitchingPriorities = StateSwitchingPriorities.unset	
 enum StateSwitchingPriorities {unset, crouch, stand, movement, jump, dash, normal, grab, special, parry, _super, ultimate, falling, air_dash, air_normal, air_grab, air_special, air_super, air_ultimate, getting_hit}
 @export var hitbox_parent: Area2D
 @export var hurtbox_parent: Area2D
@@ -124,12 +125,11 @@ func advance_animation():
 	animation.display_frame(frame, loop, character)
 	if !loop && animation.is_at_end(frame):
 		if next_state_on_animation_end:
-			state_queue.force_add(character.next_state_on_animation_end.instantiate(), stand_buffer)
+			state_queue.force_add(character.next_state_on_animation_end.instantiate(), stand_buffer, [])
 		elif stand_on_anim_done:
-			state_queue.force_add(character.stand.instantiate(), stand_buffer)
+			state_queue.force_add(character.stand.instantiate(), stand_buffer, [])
 		elif crouch_on_anim_done:
-			state_queue.force_add(character.crouch.instantiate(), crouch_buffer)
-
+			state_queue.force_add(character.crouch.instantiate(), crouch_buffer, [])
 func disable_collisions():
 	if hurtbox_parent:
 		for box: CollisionBox in hurtbox_parent.get_children():
@@ -180,17 +180,37 @@ func process_inputs():
 	check_c()
 ## Go through each hurtbox and check if any opponent hitboxes are inside it. Go through each hitbox and check if any opponent hurtboxes are inside it.
 func process_collisions():
-	## for blocking check, just see if we are holding back and not using a move where we can't block
-	pass
+	collision_queue.clear()
+	## Collect Collisions
+	if hurtbox_parent:
+		for area in hurtbox_parent.get_overlapping_areas():
+			for box in area.get_children():
+				if box is CollisionBox && box.active && box.is_hitbox && !is_our_box(box):
+					## Queue Collision
+					print("Queue Collision: " + str(frame))
+					var state: AttackState = box.state
+					collision_queue.append(state.get_collision_element())
+	## Handle Collected Collision
+	for element in collision_queue:
+		if is_blocking() && (!element.overhead || element.overhead && is_standing()) && (!element.low || element.low && is_crouching()):
+			if is_crouching():
+				state_queue.force_add(character.crouch_blockstun.instantiate(), 0, [element])
+			else:
+				state_queue.force_add(character.crouch_hitstun.instantiate(), 0, [element])
+		else:
+			if is_crouching():
+				state_queue.force_add(character.crouch_hitsun.instantiate(), 0, [element])
+			else:
+				state_queue.force_add(character.stand_hitsun.instantiate(), 0, [element])
 ## Handle changing state based on variables set for this frame
 func check_state_queue():
 	if state_queue.is_empty():
 		return
 	## Sort by highest priority
 	state_queue.queue.sort_custom(func(a, b): return a.state_switching_priority > b.state_switching_priority)
-	## Try by highest priority
+	## Try by highest priority (priority should make block/hitstun first always)
 	for state in state_queue.queue:
-		if transition_to_state(state.state, state.force_state_unless_hit):
+		if transition_to_state(state.state, state.force_state_unless_hit, state.args):
 			state_queue.remove(state)
 			pass#print("Sucess: " + state_name + "." + StateSwitchingPriorities.keys()[self.state_switching_priority] + " --> " + state.state_name + "." + StateSwitchingPriorities.keys()[state.state_switching_priority])
 		else:
@@ -200,87 +220,87 @@ func check_state_queue():
 func check_a():
 	if input_state.A:
 		## Check Command Normals
-		if backward_input() && character.four_A != null:
+		if is_backward_input() && character.four_A != null:
 			## Backwards
-			state_queue.add(character.four_A.instantiate(), normal_buffer)
+			state_queue.add(character.four_A.instantiate(), normal_buffer, [])
 		## Forward
-		elif input_state.down && forward_input() && character.four_A != null:
+		elif input_state.down && is_forward_input() && character.four_A != null:
 			## Down-Forward
-			state_queue.add(character.four_A.instantiate(), normal_buffer)
-		elif forward_input() && character.six_A != null:
+			state_queue.add(character.four_A.instantiate(), normal_buffer, [])
+		elif is_forward_input() && character.six_A != null:
 			## Forward
-			state_queue.add(character.six_A.instantiate(), normal_buffer)
+			state_queue.add(character.six_A.instantiate(), normal_buffer, [])
 		elif character.five_A != null:
 			## Neutral
-			state_queue.add(character.five_A.instantiate(), normal_buffer)
+			state_queue.add(character.five_A.instantiate(), normal_buffer, [])
 func check_b():
 	if input_state.B:
 		## Check Command Normals
-		if backward_input() && character.four_B != null:
+		if is_backward_input() && character.four_B != null:
 			## Backwards
-			state_queue.add(character.four_B.instantiate(), normal_buffer)
+			state_queue.add(character.four_B.instantiate(), normal_buffer, [])
 		## Forward
-		elif input_state.down && forward_input() && character.four_B != null:
+		elif input_state.down && is_forward_input() && character.four_B != null:
 			## Down-Forward
-			state_queue.add(character.four_B.instantiate(), normal_buffer)
-		elif forward_input() && character.six_B != null:
+			state_queue.add(character.four_B.instantiate(), normal_buffer, [])
+		elif is_forward_input() && character.six_B != null:
 			## Forward
-			state_queue.add(character.six_B.instantiate(), normal_buffer)
+			state_queue.add(character.six_B.instantiate(), normal_buffer, [])
 		elif character.five_B != null:
 			## Neutral
-			state_queue.add(character.five_B.instantiate(), normal_buffer)
+			state_queue.add(character.five_B.instantiate(), normal_buffer, [])
 func check_c():
 	if input_state.B:
 		## Check Command Normals
-		if backward_input() && character.four_C != null:
+		if is_backward_input() && character.four_C != null:
 			## Backwards
-			state_queue.add(character.four_C.instantiate(), normal_buffer)
+			state_queue.add(character.four_C.instantiate(), normal_buffer, [])
 		## Forward
-		elif input_state.down && forward_input() && character.four_C != null:
+		elif input_state.down && is_forward_input() && character.four_C != null:
 			## Down-Forward
-			state_queue.add(character.four_C.instantiate(), normal_buffer)
-		elif forward_input() && character.six_C != null:
+			state_queue.add(character.four_C.instantiate(), normal_buffer, [])
+		elif is_forward_input() && character.six_C != null:
 			## Forward
-			state_queue.add(character.six_C.instantiate(), normal_buffer)
+			state_queue.add(character.six_C.instantiate(), normal_buffer, [])
 		elif character.five_C != null:
 			## Neutral
-			state_queue.add(character.five_C.instantiate(), normal_buffer)
+			state_queue.add(character.five_C.instantiate(), normal_buffer, [])
 func check_d():
 	if input_state.D:
 		## Check Command Normals
-		if backward_input() && character.four_D != null:
+		if is_backward_input() && character.four_D != null:
 			## Backwards
-			state_queue.add(character.four_D.instantiate(), normal_buffer)
+			state_queue.add(character.four_D.instantiate(), normal_buffer, [])
 		## Forward
-		elif input_state.down && forward_input() && character.four_D != null:
+		elif input_state.down && is_forward_input() && character.four_D != null:
 			## Down-Forward
-			state_queue.add(character.four_D.instantiate(), normal_buffer)
-		elif forward_input() && character.six_D != null:
+			state_queue.add(character.four_D.instantiate(), normal_buffer, [])
+		elif is_forward_input() && character.six_D != null:
 			## Forward
-			state_queue.add(character.six_D.instantiate(), normal_buffer)
+			state_queue.add(character.six_D.instantiate(), normal_buffer, [])
 		elif character.five_D != null:
 			## Neutral
-			state_queue.add(character.five_D.instantiate(), normal_buffer)
+			state_queue.add(character.five_D.instantiate(), normal_buffer, [])
 func check_forward_walk():
 	## Forward
-	if forward_input():
-		state_queue.add(character.forward_walk.instantiate(), movement_buffer)
+	if is_forward_input():
+		state_queue.add(character.forward_walk.instantiate(), movement_buffer, [])
 func check_backward_walk():
 	## Backward
-	if backward_input():
-		state_queue.add(character.backward_walk.instantiate(), movement_buffer)
+	if is_backward_input():
+		state_queue.add(character.backward_walk.instantiate(), movement_buffer, [])
 func check_jump():
 	if input_state.up:
-		state_queue.add(character.jump.instantiate(), jump_buffer)
+		state_queue.add(character.jump.instantiate(), jump_buffer, [])
 func check_crouch():
 	if input_state.down:
-		state_queue.add(character.crouch.instantiate(), crouch_buffer)
+		state_queue.add(character.crouch.instantiate(), crouch_buffer, [])
 func check_fall():
 	if !character.get_grounded():
-		state_queue.add(character.fall.instantiate(), falling_buffer)
+		state_queue.add(character.fall.instantiate(), falling_buffer, [])
 func process_movement():
 	var movement_sign_offset: int = 1
-	if !get_facing_right():
+	if !is_facing_right():
 		movement_sign_offset = -1
 	if movespeed_sign_negative:
 		movement_sign_offset *= -1
@@ -317,12 +337,21 @@ func process_movement():
 	character.process_terminal_velocity(max_velocity_up, max_velocity_down, max_velocity_front, max_velocity_back)
 	character.process_movement()
 ## Helper Methods
-func get_facing_right() -> bool:
+func is_facing_right() -> bool:
 	return character.facing_right
-func forward_input() -> bool:
+func is_forward_input() -> bool:
 	return (input_state.left && !character.facing_right) || (input_state.right && character.facing_right)
-func backward_input() -> bool:
+func is_backward_input() -> bool:
 	return (input_state.left && character.facing_right) || (input_state.right && !character.facing_right)
+func is_blocking() -> bool:
+	return (input_state.left && character.facing_right) || (input_state.right && !character.facing_right)  
+func is_crouching() -> bool:
+	return input_state.down || state_switching_priority == StateSwitchingPriorities.crouch ## or crouch hit/block stun
+func is_standing() -> bool:
+	return (!input_state.down && !input_state.up) || state_switching_priority == StateSwitchingPriorities.stand ## or stand hit/block stun
+## Returns if the given CollisionBox comes from this Character or another one
+func is_our_box(box: CollisionBox) -> bool:
+	return (box.p1 == character.p1) && (box.state == self)
 func equals(other: CharacterState) -> bool:
 	return other.get_script() == get_script()
 ## Happens after all process but before state change
@@ -352,13 +381,11 @@ class StateQueue:
 	var queue: Array[StateQueueItem]
 	func sort_custom(method: Callable):
 		queue.sort_custom(method)
-	func force_add(state: CharacterState, buffer: int):
-		var element = StateQueueItem.new(state, buffer)
-		element.force_state_unless_hit = true
-		queue.append(element)
-	func add_new(state: CharacterState, buffer: int):
-		queue.append(StateQueueItem.new(state, buffer))
-	func add(state: CharacterState, buffer: int):
+	func force_add(state: CharacterState, buffer: int, args: Array):
+		queue.append(StateQueueItem.new(state, buffer, args, true))
+	func add_new(state: CharacterState, buffer: int, args: Array):
+		queue.append(StateQueueItem.new(state, buffer, args, false))
+	func add(state: CharacterState, buffer: int, args: Array):
 		for element in queue:
 			## If a buffer for this state exists, extend if needed and nothing else
 			if element.state.equals(state):
@@ -366,7 +393,7 @@ class StateQueue:
 					element.frames_left = buffer
 				return
 		## If a buffer doesn't exist, add_new()
-		add_new(state, buffer)
+		add_new(state, buffer, args)
 	func remove(state: StateQueueItem):
 		queue.erase(state)
 	func is_empty() -> bool:
@@ -379,18 +406,49 @@ class StateQueue:
 			get():
 				return state.state_switching_priority
 		var state: CharacterState
+		var args: Array
 		var frames_left: int = 0
 		## Forces this state unless we were hit this frame
 		var force_state_unless_hit: bool = false
-		func _init(new_state: CharacterState, buffer: int):
+		func _init(new_state: CharacterState, buffer: int, new_args: Array, force_add: bool):
 			state = new_state
 			frames_left = buffer
+			force_state_unless_hit = force_add
+			args = new_args
 		func reduce_buffer_or_delete(queue: Array):
 			frames_left -= 1
 			if frames_left <= 0 && queue.has(self):
 				queue.erase(self)
+class CollisionQueueElement:
+	func _init(new_combo_scaling: float, new_damage_onhit: float, new_damage_onblock: float, new_pushback_onhit: float, new_pushback_onblock: float, new_launch_onhit: bool, new_launch_height: float, new_juggle_height: float, new_overhead: bool, new_low: bool, new_jump_in: bool, new_blockstun: int, new_hitstun: int):
+		combo_scaling = new_combo_scaling
+		damage_onhit = new_damage_onhit
+		damage_onblock = new_damage_onblock
+		pushback_onhit = new_pushback_onhit
+		pushback_onblock = new_pushback_onblock
+		launch_onhit = new_launch_onhit
+		launch_height = new_launch_height
+		juggle_height = new_juggle_height
+		overhead = new_overhead
+		low = new_low
+		jump_in = new_jump_in
+		blockstun = new_blockstun
+		hitstun = new_hitstun
+	var combo_scaling: float
+	var damage_onhit: float
+	var damage_onblock: float
+	var pushback_onhit: float
+	var pushback_onblock: float
+	var launch_onhit: bool
+	var launch_height: float
+	var juggle_height: float
+	var overhead: bool
+	var low: bool
+	var jump_in: bool
+	var blockstun: int
+	var hitstun: int
 ## Checks and returns if this state can currently transition to given state
-func transition_to_state(state: CharacterState, force_unless_hit: bool) -> bool:
+func transition_to_state(state: CharacterState, force_unless_hit: bool, args: Array) -> bool:
 	## Write each out in a match statement so inherited objects can overwrite custom transitions
 	state._init()
 	if state == self:
@@ -398,137 +456,137 @@ func transition_to_state(state: CharacterState, force_unless_hit: bool) -> bool:
 		return false
 	match state.state_switching_priority:
 		StateSwitchingPriorities.stand:
-			return transition_to_stand(state, force_unless_hit)
+			return transition_to_stand(state, force_unless_hit, args)
 		StateSwitchingPriorities.crouch:
-			return transition_to_crouch(state, force_unless_hit)
+			return transition_to_crouch(state, force_unless_hit, args)
 		StateSwitchingPriorities.movement:
-			return transition_to_movement(state, force_unless_hit)
+			return transition_to_movement(state, force_unless_hit, args)
 		StateSwitchingPriorities.jump:
-			return transition_to_jump(state, force_unless_hit)
+			return transition_to_jump(state, force_unless_hit, args)
 		StateSwitchingPriorities.dash:
-			return transition_to_dash(state, force_unless_hit)
+			return transition_to_dash(state, force_unless_hit, args)
 		StateSwitchingPriorities.normal:
-			return transition_to_normal(state, force_unless_hit)
+			return transition_to_normal(state, force_unless_hit, args)
 		StateSwitchingPriorities.grab:
-			return transition_to_grab(state, force_unless_hit)
+			return transition_to_grab(state, force_unless_hit, args)
 		StateSwitchingPriorities.special:
-			return transition_to_special(state, force_unless_hit)
+			return transition_to_special(state, force_unless_hit, args)
 		StateSwitchingPriorities.parry:
-			return transition_to_parry(state, force_unless_hit)
+			return transition_to_parry(state, force_unless_hit, args)
 		StateSwitchingPriorities._super:
-			return transition_to_super(state, force_unless_hit)
+			return transition_to_super(state, force_unless_hit, args)
 		StateSwitchingPriorities.ultimate:
-			return transition_to_ultimate(state, force_unless_hit)
+			return transition_to_ultimate(state, force_unless_hit, args)
 		StateSwitchingPriorities.falling:
-			return transition_to_falling(state, force_unless_hit)
+			return transition_to_falling(state, force_unless_hit, args)
 		StateSwitchingPriorities.air_dash:
-			return transition_to_air_dash(state, force_unless_hit)
+			return transition_to_air_dash(state, force_unless_hit, args)
 		StateSwitchingPriorities.air_normal:
-			return transition_to_air_normal(state, force_unless_hit)
+			return transition_to_air_normal(state, force_unless_hit, args)
 		StateSwitchingPriorities.air_grab:
-			return transition_to_air_grab(state, force_unless_hit)
+			return transition_to_air_grab(state, force_unless_hit, args)
 		StateSwitchingPriorities.air_special:
-			return transition_to_air_special(state, force_unless_hit)
+			return transition_to_air_special(state, force_unless_hit, args)
 		StateSwitchingPriorities.air_super:
-			return transition_to_air_super(state, force_unless_hit)
+			return transition_to_air_super(state, force_unless_hit, args)
 		StateSwitchingPriorities.air_ultimate:
-			return transition_to_air_ultimate(state, force_unless_hit)
+			return transition_to_air_ultimate(state, force_unless_hit, args)
 		StateSwitchingPriorities.getting_hit:
-			return transition_to_getting_hit(state, force_unless_hit)
+			return transition_to_getting_hit(state, force_unless_hit, args)
 	return false
 ## Method for each trasition so inherited objects can override
-func transition_to_stand(state: CharacterState, force: bool) -> bool:
+func transition_to_stand(state: CharacterState, force: bool, args: Array) -> bool:
 	if stand_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_crouch(state: CharacterState, force: bool) -> bool:
+func transition_to_crouch(state: CharacterState, force: bool, args: Array) -> bool:
 	if crouch_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_movement(state: CharacterState, force: bool) -> bool:
+func transition_to_movement(state: CharacterState, force: bool, args: Array) -> bool:
 	if movement_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_jump(state: CharacterState, force: bool) -> bool:
+func transition_to_jump(state: CharacterState, force: bool, args: Array) -> bool:
 	if jump_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_dash(state: CharacterState, force: bool) -> bool:
+func transition_to_dash(state: CharacterState, force: bool, args: Array) -> bool:
 	if dash_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_normal(state: CharacterState, force: bool) -> bool:
+func transition_to_normal(state: CharacterState, force: bool, args: Array) -> bool:
 	if normal_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_grab(state: CharacterState, force: bool) -> bool:
+func transition_to_grab(state: CharacterState, force: bool, args: Array) -> bool:
 	if grab_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_falling(state: CharacterState, force: bool) -> bool:
+func transition_to_falling(state: CharacterState, force: bool, args: Array) -> bool:
 	if falling_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_air_dash(state: CharacterState, force: bool) -> bool:
+func transition_to_air_dash(state: CharacterState, force: bool, args: Array) -> bool:
 	if air_dash_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_special(state: CharacterState, force: bool) -> bool:
+func transition_to_special(state: CharacterState, force: bool, args: Array) -> bool:
 	if special_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_parry(state: CharacterState, force: bool) -> bool:
+func transition_to_parry(state: CharacterState, force: bool, args: Array) -> bool:
 	if parry_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_super(state: CharacterState, force: bool) -> bool:
+func transition_to_super(state: CharacterState, force: bool, args: Array) -> bool:
 	if super_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_ultimate(state: CharacterState, force: bool) -> bool:
+func transition_to_ultimate(state: CharacterState, force: bool, args: Array) -> bool:
 	if ultimate_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_getting_hit(state: CharacterState, force: bool) -> bool:
+func transition_to_getting_hit(state: CharacterState, force: bool, args: Array) -> bool:
 	if getting_hit_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_air_normal(state: CharacterState, force: bool) -> bool:
+func transition_to_air_normal(state: CharacterState, force: bool, args: Array) -> bool:
 	if air_normal_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_air_grab(state: CharacterState, force: bool) -> bool:
+func transition_to_air_grab(state: CharacterState, force: bool, args: Array) -> bool:
 	if air_grab_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_air_special(state: CharacterState, force: bool) -> bool:
+func transition_to_air_special(state: CharacterState, force: bool, args: Array) -> bool:
 	if air_special_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_air_super(state: CharacterState, force: bool) -> bool:
+func transition_to_air_super(state: CharacterState, force: bool, args: Array) -> bool:
 	if air_super_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false
-func transition_to_air_ultimate(state: CharacterState, force: bool) -> bool:
+func transition_to_air_ultimate(state: CharacterState, force: bool, args: Array) -> bool:
 	if air_ultimate_transitionable || force:
-		character.change_state(state)
+		character.change_state(state, args)
 		return true
 	return false

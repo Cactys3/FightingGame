@@ -2,6 +2,7 @@ extends CollisionShape2D
 ## Class setup as a scene, then used by States as Hitboxes and Hurtboxes
 class_name CollisionBox
 ## True = Hitbox, False = Hurtbox
+@export var state: CharacterState
 @export var is_hitbox: bool
 @export var display_debug: bool
 @export var print_debug: bool
@@ -19,7 +20,6 @@ func can_attack(other: CollisionBox):
 ## Return if this CollisionBox can be attacked by other
 func can_be_hit(other: CollisionBox):
 	pass
-
 func disable(frame: int):
 	active = false
 	display_debug = false
