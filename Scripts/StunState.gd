@@ -1,8 +1,8 @@
 extends CharacterState
 class_name StunState
-enum StunPriorities {unset, crouch_blockstun, stand_blockstun, crouch_hitstun, stand_hitstun}
-var stun_priority: StunPriorities = StunPriorities.unset
-var stun_frames: int 
+enum StunPriorities {unset, crouch_blockstun, stand_blockstun, crouch_hitstun, stand_hitstun, air_blockstun, air_hitstun}
+@export var stun_priority: StunPriorities = StunPriorities.unset
+var stun_frames: int = 1000
 
 func _init():
 	state_name = "Stun"
@@ -15,16 +15,18 @@ func enable_state(chara: Character, args: Array):
 		var attack: CollisionQueueElement = args[0]
 		if is_blockstun():
 			stun_frames = attack.blockstun
+			print("set frames: " + str(stun_frames))
 		elif is_hitstun():
 			stun_frames = attack.hitstun
+			print("set frames: " + str(stun_frames))
 
 func is_blockstun() -> bool:
-	return stun_priority == StunPriorities.crouch_blockstun || stun_priority == StunPriorities.crouch_blockstun
+	return stun_priority == StunPriorities.stand_blockstun || stun_priority == StunPriorities.crouch_blockstun
 func is_hitstun() -> bool:
-	return stun_priority == StunPriorities.crouch_hitstun || stun_priority == StunPriorities.crouch_hitstun
+	return stun_priority == StunPriorities.stand_hitstun || stun_priority == StunPriorities.crouch_hitstun
 
 func process_unique():
-	print("Frame: " + str(frame) + " Stun Frame: " + str(stun_frames))
+	#print("Frame: " + str(frame) + " Stun Frame: " + str(stun_frames))
 	if frame >= stun_frames:
 		if is_crouching():
 			state_queue.force_add(character.crouch.instantiate(), stand_buffer, [])

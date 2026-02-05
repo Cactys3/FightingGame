@@ -47,11 +47,10 @@ size = Vector2(98, 39)
 
 [node name="CactusNeutralA" type="Node2D" unique_id=1748940890 node_paths=PackedStringArray("hitbox_parent", "hurtbox_parent")]
 script = ExtResource("1_u6uvo")
+blockstun = 10
 startup_frames = 6
 active_frames = 4
 recovery_frames = 8
-block_stun = 10
-hit_stun = 12
 fiveA_transitionable = true
 fiveB_transitionable = true
 hitbox_parent = NodePath("Hitbox_Parent")

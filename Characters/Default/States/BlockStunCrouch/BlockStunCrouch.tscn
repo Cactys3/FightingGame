@@ -8,8 +8,12 @@
 script = ExtResource("2_5jg7o")
 metadata/_custom_type_script = "uid://mka3ildkshw6"
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5jg7o"]
+size = Vector2(102, 126)
+
 [node name="BlockStunCrouch" type="Node2D" unique_id=1567304229]
 script = ExtResource("1_sc6db")
+stun_priority = 1
 can_block = true
 throwable = false
 crouching = true
@@ -19,6 +23,9 @@ animation = SubResource("SpriteFrames_dn6jg")
 
 [node name="Hurtbox_Parent" type="Area2D" parent="." unique_id=603978626]
 
-[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent" unique_id=1697103668]
+[node name="BasicBox" type="CollisionShape2D" parent="Hurtbox_Parent" unique_id=1697103668 node_paths=PackedStringArray("state")]
+shape = SubResource("RectangleShape2D_5jg7o")
 script = ExtResource("1_yljvy")
+state = NodePath("../..")
+always_active = true
 metadata/_custom_type_script = "uid://dxujdli4sq6rk"
