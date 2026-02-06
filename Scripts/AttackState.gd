@@ -30,7 +30,11 @@ var normal_priority: NormalPriorities = NormalPriorities.unset
 ## Just for reference, incase some moves are jump-in immune
 @export var jump_in: bool = false
 @export var blockstun: int = 0
+## Added to blockstun when crouching
+@export var blockstun_crouch_modifier: int = 0
 @export var hitstun: int = 0
+## Added to hitstun when crouching
+@export var hitstun_crouch_modifier: int = 0
 @export var hitstun_counter_hit: int = 0
 @export var hitstun_punish_hit: int = 0
 ## Frames
@@ -141,9 +145,26 @@ func has_hit() -> bool:
 					return true
 	return false
 
-func get_collision_element() -> CollisionQueueElement:
-	return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun, hitstun)
-func get_collision_element_counter_hit() -> CollisionQueueElement:
-	return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit_counter_hit, launch_height_counter_hit, juggle_height, overhead, low, jump_in, blockstun, hitstun_counter_hit)
-func get_collision_element_punish_hit() -> CollisionQueueElement:
-	return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun, hitstun_punish_hit)
+func get_collision_element(crouch: bool, counter_hit: bool, punish_counter: bool) -> CollisionQueueElement:
+	if crouch:
+		if counter_hit:
+			return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit_counter_hit, launch_height_counter_hit, juggle_height, overhead, low, jump_in, blockstun + blockstun_crouch_modifier, hitstun_counter_hit + hitstun_crouch_modifier)
+		elif punish_counter:
+			return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun + blockstun_crouch_modifier, hitstun_punish_hit + hitstun_crouch_modifier)
+		else:
+			return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun + blockstun_crouch_modifier, hitstun + hitstun_crouch_modifier)
+	else:
+		if counter_hit:
+			return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit_counter_hit, launch_height_counter_hit, juggle_height, overhead, low, jump_in, blockstun, hitstun_counter_hit)
+		elif punish_counter:
+			return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun, hitstun_punish_hit)
+		else:
+			return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun, hitstun)
+
+func is_counter_hit() -> bool:
+	return currently_startup || currently_startup
+func is_punish_counter() -> bool:
+	return currently_recovery
+
+func queue_collision(state: AttackState):
+	state.get_collision_element(is_crouching(), is_counter_hit(), is_punish_counter())

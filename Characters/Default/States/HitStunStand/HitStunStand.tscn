@@ -2,18 +2,54 @@
 
 [ext_resource type="Script" uid="uid://dxujdli4sq6rk" path="res://Scripts/CollisionBox.gd" id="1_34h0q"]
 [ext_resource type="Script" uid="uid://cdwfa6801sqs2" path="res://Characters/Default/States/HitStunStand/HitStunStand.gd" id="1_yjm73"]
+[ext_resource type="Texture2D" uid="uid://dgl5wtadnon3e" path="res://Characters/Default/States/BlockStunStand/BlockStunStand.png" id="2_1yvvj"]
 [ext_resource type="Script" uid="uid://mka3ildkshw6" path="res://Scripts/AnimSprite.gd" id="2_r76sn"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_7w56y"]
+atlas = ExtResource("2_1yvvj")
+region = Rect2(0, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mbuae"]
+atlas = ExtResource("2_1yvvj")
+region = Rect2(112, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x4h41"]
+atlas = ExtResource("2_1yvvj")
+region = Rect2(224, 0, 112, 152)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_aotx8"]
+atlas = ExtResource("2_1yvvj")
+region = Rect2(336, 0, 112, 152)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_1yvvj"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7w56y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mbuae")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x4h41")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_aotx8")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
 script = ExtResource("2_r76sn")
 metadata/_custom_type_script = "uid://mka3ildkshw6"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_r76sn"]
 size = Vector2(102, 126)
 
-[node name="HitStunStand" type="Node2D" unique_id=1567304229]
+[node name="HitStunStand" type="Node2D" unique_id=1567304229 node_paths=PackedStringArray("hurtbox_parent")]
 script = ExtResource("1_yjm73")
 stun_priority = 4
+hurtbox_parent = NodePath("Hurtbox_Parent")
 throwable = false
 loop = true
 animation = SubResource("SpriteFrames_1yvvj")

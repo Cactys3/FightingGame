@@ -189,7 +189,7 @@ func process_collisions():
 					box = box as CollisionBox
 					box.hit_already = true
 					var state: AttackState = box.state
-					collision_queue.append(state.get_collision_element())
+					queue_collision(state)
 	## Handle Collected Collision
 	for element in collision_queue:
 		if is_blocking() && (!element.overhead || element.overhead && is_standing()) && (!element.low || element.low && is_crouching()):
@@ -298,6 +298,9 @@ func check_crouch():
 func check_fall():
 	if !character.get_grounded():
 		state_queue.add(character.fall.instantiate(), falling_buffer, [])
+## Overriden to check CH and PC
+func queue_collision(state: AttackState):
+	state.get_collision_element(is_crouching(), false, false)
 func process_movement():
 	var movement_sign_offset: int = 1
 	if !is_facing_right():

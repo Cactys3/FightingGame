@@ -76,6 +76,7 @@ size = Vector2(111, 73)
 [node name="CactusNeutralB" type="Node2D" unique_id=1944909 node_paths=PackedStringArray("hitbox_parent", "hurtbox_parent")]
 script = ExtResource("1_ejmfv")
 blockstun = 16
+hitstun = 26
 startup_frames = 10
 active_frames = 7
 recovery_frames = 16
