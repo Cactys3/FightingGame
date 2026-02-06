@@ -2,6 +2,7 @@ extends CharacterState
 class_name AttackState
 func _init():
 	super()
+
 enum AirNormalPriorities {unset, A, B}
 enum NormalPriorities {unset, FiveA, FiveB, SixA, SixB, FourA, FourB, TwoA, TwoB, ThreeA, ThreeB, OneA, OneB}
 var normal_priority: NormalPriorities = NormalPriorities.unset
@@ -37,6 +38,7 @@ var normal_priority: NormalPriorities = NormalPriorities.unset
 @export var active_frames: int = 0
 @export var recovery_frames: int = 0
 @export_group("Cancels")
+@export var cancellable_on_whiff: bool = false
 @export var fiveA_transitionable: bool = false
 @export var fiveB_transitionable: bool = false
 @export var sixA_transitionable: bool = false
@@ -55,6 +57,9 @@ var currently_active: bool = false
 var currently_recovery: bool = false
 var cancellable: bool = false
 var kara_cancellable: bool = false
+var hit_already: bool = false:
+	get():
+		return hit_already || has_hit()
 func advance_frame():
 	super()
 	if frame >= startup_frames + active_frames:
@@ -79,7 +84,8 @@ func transition_to_stand(state: CharacterState, force: bool, args: Array) -> boo
 		return super(state, force, args)
 	return false
 func transition_to_normal(state: CharacterState, force: bool, args: Array) -> bool:
-	if cancellable && can_cancel_into_normal(state):
+	print(state.state_name + " Cancel: " + str(cancellable) + " HIt: " + str(hit_already))
+	if cancellable && hit_already && can_cancel_into_normal(state):
 		return super(state, force, args)
 	return false
 func transition_to_special(state: CharacterState, force: bool, args: Array) -> bool:
@@ -124,7 +130,16 @@ func can_cancel_into_normal(state: CharacterState) -> bool:
 		NormalPriorities.OneB:
 			return oneB_transitionable
 	return false
-
+## Returns if the hitbox has hit
+func has_hit() -> bool:
+	if hitbox_parent:
+		for box in hitbox_parent.get_children():
+			if box is CollisionBox:
+				box = box as CollisionBox
+				if box.hit_already:
+					hit_already = true
+					return true
+	return false
 
 func get_collision_element() -> CollisionQueueElement:
 	return CollisionQueueElement.new(self, combo_scaling, damage_onhit, damage_onblock, pushback_onhit, pushback_onblock, launch_onhit, launch_height, juggle_height, overhead, low, jump_in, blockstun, hitstun)
