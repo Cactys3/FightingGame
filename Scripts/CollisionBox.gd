@@ -15,7 +15,12 @@ const hitbox_debug_color: Color = Color(255, 0, 0, 0.1)
 const hurtbox_debug_color: Color = Color(0, 0, 255, 0.1)
 var active: bool = false
 ## things hit since last disable()
-var hit_already: bool = false
+var hit_already: bool = false:
+	set(value):
+		hit_already = value
+		## we need to set hit_already here else I think this box's hit_already gets set to false before the state checks it
+		if value && state is AttackState:
+			state.hit_already = true
 ## Return if this CollisionBox can attack other
 func can_attack(other: CollisionBox):
 	pass

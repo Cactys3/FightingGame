@@ -63,22 +63,29 @@ var cancellable: bool = false
 var kara_cancellable: bool = false
 var hit_already: bool = false:
 	get():
-		return hit_already || has_hit()
+		if has_hit():
+			hit_already = true
+		return hit_already
 func advance_frame():
 	super()
-	if frame >= startup_frames + active_frames:
+	if frame >= startup_frames + active_frames + recovery_frames:
+		state_queue.force_add(character.stand.instantiate(), stand_buffer, [])
+		#print("finished " + str(frame))
+	elif frame >= startup_frames + active_frames:
 		currently_recovery = true
 		cancellable = true
+		#print("Recovery " + str(frame) + " " + str(cancellable))
 	elif frame >= startup_frames:
 		currently_active = true
 		cancellable = false
+		#print("active" + str(frame) + " " + str(cancellable))
 	else:
 		currently_startup = true
 		cancellable = false
+		#print("startup" + str(frame) + " " + str(cancellable))
 ## Check transitioning after animation is done
 func process_unique():
-	if frame >= startup_frames + active_frames + recovery_frames:#if animation.is_at_end(frame):
-		state_queue.force_add(character.stand.instantiate(), stand_buffer, [])
+	pass
 func enable_state(chara: Character, args: Array):
 	super(chara, args)
 ## Getting hit, handle punish/counter
@@ -88,7 +95,8 @@ func transition_to_stand(state: CharacterState, force: bool, args: Array) -> boo
 		return super(state, force, args)
 	return false
 func transition_to_normal(state: CharacterState, force: bool, args: Array) -> bool:
-	print(state.state_name + " Cancel: " + str(cancellable) + " HIt: " + str(hit_already))
+	#print(state.state_name + " Cancel: " + str(cancellable) + " HIt: " + str(hit_already))
+	hit_already
 	if cancellable && hit_already && can_cancel_into_normal(state):
 		return super(state, force, args)
 	return false
@@ -106,6 +114,7 @@ func transition_to_dash(state: CharacterState, force: bool, args: Array) -> bool
 func is_blocking() -> bool:
 	return false
 func can_cancel_into_normal(state: CharacterState) -> bool:
+	print("yay")
 	match normal_priority:
 		NormalPriorities.unset:
 			return false
@@ -145,6 +154,11 @@ func has_hit() -> bool:
 					return true
 	return false
 
+func process_movement():
+	## Check collisions on the endstep of process collisions after player is done with that before box's are reset and stuff
+	has_hit()
+	super()
+
 func get_collision_element(crouch: bool, counter_hit: bool, punish_counter: bool) -> CollisionQueueElement:
 	if crouch:
 		if counter_hit:
@@ -167,4 +181,4 @@ func is_punish_counter() -> bool:
 	return currently_recovery
 
 func queue_collision(state: AttackState):
-	state.get_collision_element(is_crouching(), is_counter_hit(), is_punish_counter())
+	collision_queue.append(state.get_collision_element(is_crouching(), is_counter_hit(), is_punish_counter()))

@@ -194,14 +194,14 @@ func process_collisions():
 	for element in collision_queue:
 		if is_blocking() && (!element.overhead || element.overhead && is_standing()) && (!element.low || element.low && is_crouching()):
 			if is_crouching():
-				state_queue.force_add(character.crouch_blockstun.instantiate(), 0, [element])
+				state_queue.force_add(character.crouch_blockstun.instantiate(), 0, [element, element.combo])
 			else:
-				state_queue.force_add(character.stand_blockstun.instantiate(), 0, [element])
+				state_queue.force_add(character.stand_blockstun.instantiate(), 0, [element, element.combo])
 		else:
 			if is_crouching():
-				state_queue.force_add(character.crouch_hitsun.instantiate(), 0, [element])
+				state_queue.force_add(character.crouch_hitsun.instantiate(), 0, [element, element.combo])
 			else:
-				state_queue.force_add(character.stand_hitsun.instantiate(), 0, [element])
+				state_queue.force_add(character.stand_hitsun.instantiate(), 0, [element, element.combo])
 ## Handle changing state based on variables set for this frame
 func check_state_queue():
 	if state_queue.is_empty():
@@ -300,7 +300,7 @@ func check_fall():
 		state_queue.add(character.fall.instantiate(), falling_buffer, [])
 ## Overriden to check CH and PC
 func queue_collision(state: AttackState):
-	state.get_collision_element(is_crouching(), false, false)
+	collision_queue.append(state.get_collision_element(is_crouching(), false, false))
 func process_movement():
 	var movement_sign_offset: int = 1
 	if !is_facing_right():
@@ -452,6 +452,7 @@ class CollisionQueueElement:
 	var jump_in: bool
 	var blockstun: int
 	var hitstun: int
+	var combo: int = 0
 ## Checks and returns if this state can currently transition to given state
 func transition_to_state(state: CharacterState, force_unless_hit: bool, args: Array) -> bool:
 	## Write each out in a match statement so inherited objects can overwrite custom transitions
