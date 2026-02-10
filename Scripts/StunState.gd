@@ -21,7 +21,6 @@ func enable_state(chara: Character, args: Array):
 			stun_frames = attack.hitstun
 	if args[1] is int:
 		combo = args[1]
-		print("combo: " + str(combo))
 
 func is_blockstun() -> bool:
 	return stun_priority == StunPriorities.stand_blockstun || stun_priority == StunPriorities.crouch_blockstun

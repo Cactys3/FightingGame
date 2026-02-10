@@ -51,6 +51,7 @@ script = ExtResource("1_yjm73")
 stun_priority = 4
 hurtbox_parent = NodePath("Hurtbox_Parent")
 throwable = false
+drag_x = 0.3
 loop = true
 animation = SubResource("SpriteFrames_1yvvj")
 

@@ -53,7 +53,7 @@ stun_priority = 2
 hurtbox_parent = NodePath("Hurtbox_Parent")
 can_block = true
 throwable = false
-drag_x = 0.01
+drag_x = 0.3
 loop = true
 animation = SubResource("SpriteFrames_1530y")
 

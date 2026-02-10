@@ -94,8 +94,6 @@ func enable_state(chara: Character, args: Array):
 	character = chara
 	frame = 0
 	enabled = true
-	if stop_momentum:
-		character.set_movement(Vector2.ZERO)
 	setup_collision()
 ## Disables this state when transitioning to another state
 func disable_state():
@@ -338,7 +336,18 @@ func process_movement():
 	else:
 		character.set_movement(Vector2(character.velocity.x, 0))
 	character.process_terminal_velocity(max_velocity_up, max_velocity_down, max_velocity_front, max_velocity_back)
+	if stop_momentum:
+		if character.p1:
+			print("stop momentum" + str(character.velocity))
+		if b:
+			character.set_movement(Vector2.ZERO)
+			b = false
+		#stop_momentum = false
+	else:
+		if character.p1:
+			print("dont stop momentum" + str(character.velocity))
 	character.process_movement()
+var b: bool = true
 ## Helper Methods
 func is_facing_right() -> bool:
 	return character.facing_right

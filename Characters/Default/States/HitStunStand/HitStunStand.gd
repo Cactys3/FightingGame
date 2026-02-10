@@ -1,6 +1,6 @@
 extends StunState
 
 func _init():
-	state_name = "HitStun Stand"
 	super()
+	state_name = "HitStun Stand"
 	stun_priority = StunPriorities.stand_hitstun

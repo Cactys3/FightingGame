@@ -77,7 +77,7 @@ func advance_frame():
 		#print("Recovery " + str(frame) + " " + str(cancellable))
 	elif frame >= startup_frames:
 		currently_active = true
-		cancellable = false
+		cancellable = true
 		#print("active" + str(frame) + " " + str(cancellable))
 	else:
 		currently_startup = true

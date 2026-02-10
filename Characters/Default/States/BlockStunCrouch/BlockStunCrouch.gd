@@ -1,6 +1,6 @@
 extends StunState
 
 func _init():
-	state_name = "BlockStun Crouch"
 	super()
+	state_name = "BlockStun Crouch"
 	stun_priority = StunPriorities.crouch_blockstun
